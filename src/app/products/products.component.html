@@ -1,0 +1,138 @@
+<div class="products-container">
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <h2>Filter Products</h2>
+    
+    <div class="filter-row">
+      <!-- Search -->
+      <div class="filter-group">
+        <label for="search">Search:</label>
+        <input 
+          type="text" 
+          id="search"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Search for products..."
+          class="search-input"
+        />
+      </div>
+      
+      <!-- Category Filter -->
+      <div class="filter-group">
+        <label for="category">Category:</label>
+        <select 
+          id="category"
+          [(ngModel)]="selectedCategory"
+          (change)="onCategoryChange()"
+          class="category-select"
+        >
+          @for (category of categories; track category.id) {
+            <option [ngValue]="category.id">{{ category.name }}</option>
+          }
+        </select>
+      </div>
+      
+      <!-- Price Range -->
+      <div class="filter-group">
+        <label>Price Range:</label>
+        <div class="price-range">
+          <input 
+            type="number"
+            [(ngModel)]="minPrice"
+            (input)="onPriceChange()"
+            placeholder="Min"
+            class="price-input"
+            min="0"
+          />
+          <span>to</span>
+          <input 
+            type="number"
+            [(ngModel)]="maxPrice"
+            (input)="onPriceChange()"
+            placeholder="Max"
+            class="price-input"
+            min="0"
+          />
+        </div>
+      </div>
+      
+      <!-- Reset Button -->
+      <div class="filter-group">
+        <button (click)="resetFilters()" class="reset-btn">
+          Reset Filters
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div class="loading-state" [hidden]="!isLoadingProducts">
+    <div class="spinner"></div>
+    <p>Loading products...</p>
+  </div>
+  
+  <!-- Products Grid -->
+  <div class="products-section" [hidden]="isLoadingProducts">
+    <div class="products-header">
+      <h2>Products</h2>
+      <span class="products-count">
+        {{filteredProducts.length}} products
+      </span>
+    </div>
+    
+    <div class="products-grid" [hidden]="filteredProducts.length === 0">
+      @for (product of filteredProducts; track product.productTemplateId) {
+        <div class="product-card">
+          <div class="product-image">
+            <img [src]="product.imageUrl" [alt]="product.name" />
+          </div>
+          
+          <div class="product-info">
+            <h3 class="product-name">{{product.name}}</h3>
+            <p class="product-description">{{product.description}}</p>
+            <div class="product-meta">
+              <span class="product-category">{{getCategoryName(product.category)}}</span>
+              <span class="product-price">{{formatPrice(product.basePrice)}} EGP</span>
+            </div>
+            <div class="product-date">
+              Created: {{formatDate(product.createdAt)}}
+            </div>
+            <div class="product-actions">
+              @if (!isLoggedIn()) {
+                <button 
+                  class="btn-secondary"
+                  (click)="goToLogin()"
+                >
+                  Login to Add to Cart
+                </button>
+              } @else {
+                <button 
+                  class="btn-primary"
+                  (click)="addToCart(product)"
+                  [disabled]="isAddingToCart(product.productTemplateId)"
+                >
+                  @if (isAddingToCart(product.productTemplateId)) {
+                    <span class="btn-spinner"></span>
+                    Adding...
+                  } @else {
+                    Add to Cart
+                  }
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+    
+    <!-- No Products Message -->
+    <div class="no-products" [hidden]="filteredProducts.length > 0">
+      <div class="no-products-icon">📦</div>
+      <h3>No Products Found</h3>
+      <p>No products match your search criteria.</p>
+      <button (click)="resetFilters()" class="reset-btn">
+        Reset Filters
+      </button>
+    </div>
+  </div>
+</div>

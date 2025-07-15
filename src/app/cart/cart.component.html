@@ -1,0 +1,120 @@
+<div class="cart-container">
+  <div class="cart-header">
+    <h1>Shopping Cart</h1>
+    <div class="cart-summary">
+      <span class="item-count">{{getTotalItems()}} items</span>
+      <span class="total-price">Total: {{formatPrice(getTotalPrice())}} EGP</span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" [hidden]="!isLoading">
+    <div class="spinner"></div>
+    <p>Loading cart items...</p>
+  </div>
+
+  <!-- Cart Items -->
+  <div class="cart-content" [hidden]="isLoading">
+    <!-- Empty Cart -->
+    <div class="empty-cart" [hidden]="cartItems.length > 0">
+      <div class="empty-cart-icon">🛒</div>
+      <h3>Your cart is empty</h3>
+      <p>Add some products to your cart to see them here.</p>
+      <button class="btn-primary" (click)="router.navigate(['/products'])">
+        Continue Shopping
+      </button>
+    </div>
+
+    <!-- Cart Items List -->
+    <div class="cart-items" [hidden]="cartItems.length === 0">
+      @for (item of cartItems; track item.cartItemId) {
+        <div class="cart-item">
+          <div class="item-image">
+            <img [src]="item.customProduct.customImageUrl" [alt]="item.customProduct.customName" />
+          </div>
+          
+          <div class="item-details">
+            <h3 class="item-name">{{item.customProduct.customName}}</h3>
+            <p class="item-description">{{item.customProduct.customDescription}}</p>
+            <div class="item-meta">
+              <span class="item-price">{{formatPrice(item.customProduct.price)}} EGP</span>
+              <span class="item-added">Added: {{formatDate(item.addedAt)}}</span>
+            </div>
+          </div>
+
+          <div class="item-quantity">
+            <label for="quantity-{{item.cartItemId}}">Quantity:</label>
+            <div class="quantity-controls">
+              <button 
+                class="quantity-btn"
+                (click)="updateQuantity(item, item.quantity - 1)"
+                [disabled]="updatingItems[item.cartItemId]"
+              >
+                -
+              </button>
+              <input 
+                type="number" 
+                id="quantity-{{item.cartItemId}}"
+                [value]="item.quantity"
+                (change)="onQuantityChange(item, $event)"
+                [disabled]="updatingItems[item.cartItemId]"
+                min="1"
+                class="quantity-input"
+              />
+              <button 
+                class="quantity-btn"
+                (click)="updateQuantity(item, item.quantity + 1)"
+                [disabled]="updatingItems[item.cartItemId]"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="item-total">
+            <span class="total-price">{{formatPrice(item.customProduct.price * item.quantity)}} EGP</span>
+          </div>
+
+          <div class="item-actions">
+            <button 
+              class="btn-danger"
+              (click)="removeItem(item)"
+              [disabled]="updatingItems[item.cartItemId]"
+            >
+              @if (updatingItems[item.cartItemId]) {
+                <span class="btn-spinner"></span>
+              } @else {
+                Remove
+              }
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Cart Actions -->
+    <div class="cart-actions" [hidden]="cartItems.length === 0">
+      <div class="cart-total">
+        <div class="total-summary">
+          <div class="total-row">
+            <span>Items ({{getTotalItems()}}):</span>
+            <span>{{formatPrice(getTotalPrice())}} EGP</span>
+          </div>
+          <div class="total-row total-final">
+            <span>Total:</span>
+            <span>{{formatPrice(getTotalPrice())}} EGP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-secondary" (click)="clearCart()">
+          Clear Cart
+        </button>
+        <button class="btn-primary" (click)="proceedToCheckout()">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
