@@ -1,0 +1,54 @@
+<div class="w-50 mx-auto my-5">
+    @if(apiError){
+    <div class="alert alert-danger p-1" role="alert">
+        {{apiError}}
+    
+    </div>
+    }
+
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+<!--Name-->
+    <!-- {{name?.errors | json}} -->
+    <div class="form-floating mb-3">
+      <input formControlName="email" type="text" class="form-control mb-2" id="email" placeholder="Username" />
+      <label for="email">Email</label>
+      @if (email?.errors && email?.touched)
+      {
+      <div class="alert alert-danger p-1" role="alert">
+
+        @if (email?.hasError('required'))
+        { <p class="m-0">Email is required</p>
+        }
+           @else if (email?.hasError('email')) {
+            <p class="m-0">Email is not valid</p>
+          }
+      </div>
+      }
+    </div>
+
+
+
+<!--Password-->
+<!-- alternative get password use this -->
+ <!--   @let password = loginForm.get.password -->
+      <div class="form-floating mb-3">
+        <input formControlName="password" type="password" class="form-control mb-2" id="password" placeholder="Password" />
+        <label for="password">Password</label>
+
+        @if (loginForm.get('password')?.errors && loginForm.get('password')?.touched)
+        {
+         <div class="alert alert-danger p-1" role="alert">
+          @if (loginForm.get('password')?.hasError('required')) {
+            <p class="m-0">password is required</p>
+          }
+          @else if (loginForm.get('password')?.hasError('pattern')) {
+            <p class="m-0">password Should Start With Capital Letter</p>
+          }
+        </div>
+
+        }
+      </div>
+      <button type="submit" class="btn btn-primary">Login</button>
+
+    </form>
+</div>

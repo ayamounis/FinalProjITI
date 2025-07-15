@@ -1,0 +1,191 @@
+<div class="w-50 mx-auto my-5">
+    @if(apiError){
+    <div class="alert alert-danger p-1" role="alert">
+        {{apiError}}
+    
+    </div>
+    }
+
+  <form [formGroup]="RegisterForm" (ngSubmit)="register()">
+<!--Name-->
+    <!-- {{name?.errors | json}} -->
+    <div class="form-floating mb-3">
+      <input formControlName="username" type="text" class="form-control mb-2" id="username" placeholder="Username" />
+      <label for="username">Username</label>
+      @if (username?.errors && username?.touched)
+      {
+      <div class="alert alert-danger p-1" role="alert">
+
+        @if (username?.hasError('required'))
+        { <p class="m-0">Name is required</p>
+        }
+        @else if (username?.hasError('minlength'))
+        { <p class="m-0">Min length 3</p>
+        }
+        @else if (username?.hasError('maxlength'))
+        { <p class="m-0">Max length 11</p> }
+      </div>
+      }
+    </div>
+
+<!--FirstName-->
+    <div class="form-floating mb-3">
+      <input formControlName="firstName" type="text" class="form-control mb-2" id="firstName" placeholder="First Name" />
+      <label for="firstName">First Name</label>
+      @if (RegisterForm.get('firstName')?.errors && RegisterForm.get('firstName')?.touched)
+      {
+       <div class="alert alert-danger p-1" role="alert">
+        @if (RegisterForm.get('firstName')?.hasError('required')) {
+          <p class="m-0">First Name is required</p>
+        }
+        @else if (RegisterForm.get('firstName')?.hasError('minlength')) {
+          <p class="m-0">Min length 3</p>
+        }
+        @else if (RegisterForm.get('firstName')?.hasError('maxlength')) {
+          <p class="m-0">Max length 11</p>  
+        }
+      </div>
+      }
+    </div>
+<!--LastName-->
+    <div class="form-floating mb-3">
+      <input formControlName="lastName" type="text" class="form-control mb-2" id="lastName" placeholder="Last Name" />
+      <label for="lastName">Last Name</label>
+      @if (RegisterForm.get('lastName')?.errors && RegisterForm.get('lastName')?.touched)
+      {
+       <div class="alert alert-danger p-1" role="alert">
+        @if (RegisterForm.get('lastName')?.hasError('required')) {
+          <p class="m-0">Last Name is required</p>
+        }
+        @else if (RegisterForm.get('lastName')?.hasError('minlength')) {
+          <p class="m-0">Min length 3</p>
+        }
+        @else if (RegisterForm.get('lastName')?.hasError('maxlength')) {
+          <p class="m-0">Max length 11</p>  
+        }
+      </div>
+      }
+    </div>
+
+
+<!--Email-->
+      <div class="form-floating mb-3">
+        <input formControlName="email" type="email" class="form-control mb-2" id="email" placeholder="email" />
+        <label for="UserEmail">UserEmail</label>
+
+
+        @if (email?.errors && email?.touched)
+        {
+         <div class="alert alert-danger p-1" role="alert">
+          @if (email?.hasError('required')) {
+            <p class="m-0">Email is required</p>
+          }
+          @else if (email?.hasError('email')) {
+            <p class="m-0">Email is not valid</p>
+          }
+        </div>
+
+        }
+      </div>
+<!--Phone-->
+      <div class="form-floating mb-3">
+        <input formControlName="phoneNumber" type="tel" class="form-control mb-2" id="phoneNumber" placeholder="phoneNumber" />
+        <label for="UserPhone">UserPhone</label>
+
+        @if (phoneNumber?.errors && phoneNumber?.touched)
+        {
+         <div class="alert alert-danger p-1" role="alert">
+          @if (phoneNumber?.hasError('required')) {
+            <p class="m-0">phoneNumber is required</p>
+          }
+        </div>
+
+        }
+      </div>
+<!--Password-->
+<!-- alternative get password use this -->
+ <!--   @let password = regisRegisterForm.get.password -->
+      <div class="form-floating mb-3">
+        <input formControlName="password" type="password" class="form-control mb-2" id="password" placeholder="Password" />
+        <label for="password">Password</label>
+
+        @if (RegisterForm.get('password')?.errors && RegisterForm.get('password')?.touched)
+        {
+         <div class="alert alert-danger p-1" role="alert">
+          @if (RegisterForm.get('password')?.hasError('required')) {
+            <p class="m-0">password is required</p>
+          }
+          @else if (RegisterForm.get('password')?.hasError('pattern')) {
+            <p class="m-0">password Should Start With Capital Letter</p>
+          }
+        </div>
+
+        }
+      </div>
+<!--rePassword-->
+
+      <div class="form-floating mb-3">
+        <input formControlName="rePassword" type="password" class="form-control mb-2" id="rePassword"
+          placeholder="Password" />
+        <label for="rePassword">Confirm Password</label>
+
+         @if (RegisterForm.get('rePassword')?.errors && RegisterForm.get('rePassword')?.touched)
+        {
+         <div class="alert alert-danger p-1" role="alert">
+          @if (RegisterForm.get('rePassword')?.hasError('required')) {
+            <p class="m-0">rePassword is required</p>
+          }
+          @else if (RegisterForm.get('rePassword')?.hasError('misMatch')) {
+            <p class="m-0">rePassword Should Match with Password </p>
+          }
+        </div>
+
+        }
+      </div>
+<!--Role-->
+
+<select formControlName="role" class="form-select" aria-label="Default select example">
+  <option value="Default" disabled selected>Select Your Account Type</option>
+  <option value="Seller">Seller</option>
+  <option value="User">User</option>
+</select>
+
+@let role = RegisterForm.get('role')?.value;
+
+@if (role === 'Seller') {
+  <div class="form-floating mb-3 my-2">
+    <input formControlName="storeName" type="text" class="form-control mb-2" id="storeName" placeholder="Store Name" />
+    <label for="storeName">Store Name</label>
+
+    @if (RegisterForm.get('storeName')?.errors && RegisterForm.get('storeName')?.touched) {
+      <div class="alert alert-danger p-1" role="alert">
+        @if (RegisterForm.get('storeName')?.hasError('required')) {
+          <p class="m-0">Store Name is required</p>
+        }
+        @else if (RegisterForm.get('storeName')?.hasError('minlength')) {
+          <p class="m-0">Min length 3</p>
+        }
+        @else if (RegisterForm.get('storeName')?.hasError('maxlength')) {
+          <p class="m-0">Max length 11</p>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="form-floating mb-3">
+    <textarea formControlName="description" class="form-control mb-2" id="description" placeholder="Description"></textarea>
+    <label for="description">Description</label>
+
+    @if (RegisterForm.get('description')?.errors && RegisterForm.get('description')?.touched) {
+      <div class="alert alert-danger p-1" role="alert">
+        @if (RegisterForm.get('description')?.hasError('maxlength')) {
+          <p class="m-0">Max length 100</p>
+        }
+      </div>
+    }
+  </div>
+} 
+      <button type="submit" class="btn btn-primary my-3">Register</button>
+
+    </form>
+</div>
