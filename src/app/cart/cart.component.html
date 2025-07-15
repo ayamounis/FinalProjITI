@@ -42,34 +42,7 @@
             </div>
           </div>
 
-          <div class="item-quantity">
-            <label for="quantity-{{item.cartItemId}}">Quantity:</label>
-            <div class="quantity-controls">
-              <button 
-                class="quantity-btn"
-                (click)="updateQuantity(item, item.quantity - 1)"
-                [disabled]="updatingItems[item.cartItemId]"
-              >
-                -
-              </button>
-              <input 
-                type="number" 
-                id="quantity-{{item.cartItemId}}"
-                [value]="item.quantity"
-                (change)="onQuantityChange(item, $event)"
-                [disabled]="updatingItems[item.cartItemId]"
-                min="1"
-                class="quantity-input"
-              />
-              <button 
-                class="quantity-btn"
-                (click)="updateQuantity(item, item.quantity + 1)"
-                [disabled]="updatingItems[item.cartItemId]"
-              >
-                +
-              </button>
-            </div>
-          </div>
+         
 
           <div class="item-total">
             <span class="total-price">{{formatPrice(item.customProduct.price * item.quantity)}} EGP</span>
@@ -108,9 +81,7 @@
       </div>
 
       <div class="action-buttons">
-        <button class="btn-secondary" (click)="clearCart()">
-          Clear Cart
-        </button>
+        
         <button class="btn-primary" (click)="proceedToCheckout()">
           Proceed to Checkout
         </button>

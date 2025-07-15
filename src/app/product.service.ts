@@ -148,13 +148,7 @@ export class ProductService {
 
   getAllProducts(): Observable<Product[]> {
     console.log('ProductService: Attempting to fetch from:', this.apiUrl);
-    
-    // For now, return mock data directly to test
-    console.log('ProductService: Returning mock data');
-    return of(this.mockProducts);
-    
-    // Comment out the HTTP call for now
-    /*
+
     return this.http.get<Product[]>(this.apiUrl).pipe(
       catchError(error => {
         console.error('API Error:', error);
@@ -162,7 +156,7 @@ export class ProductService {
         return of(this.mockProducts);
       })
     );
-    */
+    
   }
 
   // Additional methods for filtering

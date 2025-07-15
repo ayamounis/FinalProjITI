@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router'; // إضافة هذا
 import { ProductService } from '../product.service';
 import { Product } from '../product';
 import { isPlatformBrowser } from '@angular/common';
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule], // إضافة RouterModule هنا
   templateUrl: './products.component.html',
   styleUrl: './products.component.css'
 })
