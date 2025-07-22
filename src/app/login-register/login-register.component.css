@@ -1,55 +1,56 @@
 .auth-container {
-  background-image: url('../../../public/img/WhatsApp\ Image\ 2025-07-15\ at\ 06.53.25_20d789cc.jpg');
+  background-image: url('../../../public/img/lgg.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  padding: 20px;
-  min-height: 100vh;
+  padding: 50px;
+  min-height: 150vh;
   display: flex;
+  justify-content: flex-end; /* الفورم على اليسار في كل الشاشات */
   align-items: center;
-  justify-content: center;
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
-.auth-container::before {
+.auth-container::before,
+.auth-container::after {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  /* background: rgba(0, 0, 0, 0.3);  */
+  position: relative;
+  inset: 0;
   z-index: 1;
 }
 
 .auth-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   backdrop-filter: blur(1px);
-  z-index: 1;
 }
 
 .auth-card {
-  width: 100%;
-  max-width: 450px;
-  background: rgba(255, 255, 255, 0.05); /* شفافية أكثر */
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+    width: 100%;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.05);
+  /* backdrop-filter: blur(25px); */
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 25px;
   box-shadow: 
     0 25px 50px rgba(0,0,0,0.2),
     0 0 0 1px rgba(255,255,255,0.05) inset;
-  overflow: hidden;
-  position: relative;
+  position: absolute ;
+  top: 50px;
   z-index: 2;
+  animation: fadeIn 0.8s ease forwards;
   transition: all 0.3s ease;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .auth-card:hover {
@@ -61,31 +62,21 @@
 }
 
 .card-header {
-  background: rgba(255, 255, 255, 0.03); /* شفاف جداً */
+  background: rgba(255, 255, 255, 0.03);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(15px);
   padding: 2rem 1.5rem 1.5rem;
   position: relative;
 }
 
-.card-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-}
-
 .card-header h2 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 2px 15px rgba(0,0,0,0.3);
+  color: #1200ac;
   margin-bottom: 1.5rem;
 }
 
+/* === Tab Buttons === */
 .btn-group-toggle {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 50px;
@@ -100,71 +91,68 @@
   font-weight: 600;
   font-size: 0.95rem;
   padding: 12px 20px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease-in-out;
   position: relative;
   overflow: hidden;
 }
 
-/* الزر النشط - أقل شفافية */
 .btn-light.text-primary {
-  background: rgba(255, 255, 255, 0.9) !important;
-  color: #667eea !important;
+  background: #e4018a !important;
+  color: white !important;
   border: none !important;
   box-shadow: 
-    0 8px 25px rgba(102, 126, 234, 0.2),
+    0 8px 25px rgba(255, 165, 0, 0.3),
     0 2px 10px rgba(0,0,0,0.1);
   transform: translateY(-2px);
 }
 
-/* الزر غير النشط - شفاف */
 .btn-outline-light.text-white {
   background: rgba(255, 255, 255, 0.05) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: #1100ab!important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .btn-outline-light.text-white:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
-  color: white !important;
+  background: #a9a0ff !important;
+  color: #1100ab !important;
   transform: translateY(-1px);
 }
 
-/* تحسين محتوى الكارد - شفاف */
+/* === Form Body === */
 .card-body {
+  /* width: 600; */
+
   background: rgba(255, 255, 255, 0.02);
   padding: 2rem 1.5rem;
   position: relative;
 }
 
-/* تحسين الحقول - شفافة */
-.form-control {
+/* .form-control {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 15px;
   padding: 15px 20px;
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: #4f00a8;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   backdrop-filter: blur(10px);
-  
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .form-control:focus {
   background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 165, 0, 0.6);
   box-shadow: 
-    0 0 0 3px rgba(255, 255, 255, 0.1),
+    0 0 0 3px rgba(255, 165, 0, 0.2),
     0 8px 25px rgba(0,0,0,0.15);
   transform: translateY(-2px);
   outline: none;
-  color: rgba(255, 255, 255, 1);
 }
 
 .form-control::placeholder {
   color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
-}
+} */
 
 .form-label {
   color: rgba(255, 255, 255, 0.95);
@@ -174,62 +162,46 @@
   text-shadow: 0 1px 5px rgba(0,0,0,0.3);
 }
 
+/* === Primary Orange Button === */
 .btn-primary {
-  /* background: linear-gradient(135deg, 
-    rgba(102, 126, 234, 0.8) 0%, 
-    rgba(118, 75, 162, 0.8) 50%, 
-    rgba(240, 147, 251, 0.8) 100%); */
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: #ff9800;
+  border: none;
   border-radius: 15px;
   padding: 15px 20px;
   font-weight: 700;
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: #1100ab;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-  backdrop-filter: blur(10px);
-}
-
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.5s;
-}
-
-.btn-primary:hover::before {
-  left: 100%;
 }
 
 .btn-primary:hover {
+  background-color: #1100ab;
   transform: translateY(-3px);
-  /* background: linear-gradient(135deg, 
-    rgba(102, 126, 234, 0.9) 0%, 
-    rgba(118, 75, 162, 0.9) 50%, 
-    rgba(240, 147, 251, 0.9) 100%); */
   box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 }
 
 .btn-primary:active {
+  background-color: #1100ab;
   transform: translateY(-1px);
 }
 
-/* تحسين الروابط */
+/* نصوص وروابط */
 a {
   color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
   font-weight: 500;
-  transition: all 0.3s ease;
+  text-decoration: none;
   position: relative;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: white;
+  text-shadow: 0 0 10px rgba(255,255,255,0.8);
 }
 
 a::after {
@@ -247,84 +219,13 @@ a:hover::after {
   width: 100%;
 }
 
-a:hover {
-  color: white;
-  text-shadow: 0 0 10px rgba(255,255,255,0.8);
-}
-
-/* تحسين الـ checkbox */
-input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: rgba(255, 255, 255, 0.8);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* إضافة تأثيرات للنصوص */
-.text-white {
-  color: rgba(255, 255, 255, 0.95) !important;
-  text-shadow: 0 1px 5px rgba(0,0,0,0.3);
-}
-
-/* تحسين النصوص الصغيرة */
-small, .small {
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-}
-
-/* تحسين الاستجابة للشاشات الصغيرة */
 @media (max-width: 576px) {
+  .auth-container {
+    justify-content: flex-start; 
+  }
+
   .auth-card {
     max-width: 95%;
     margin: 10px;
-    background: rgba(255, 255, 255, 0.08); /* شفافية أكثر للشاشات الصغيرة */
   }
-  
-  .card-header {
-    padding: 1.5rem 1rem 1rem;
-  }
-  
-  .card-body {
-    padding: 1.5rem 1rem;
-  }
-  
-  .card-header h2 {
-    font-size: 1.5rem;
-  }
-}
-
-/* تأثيرات إضافية للتفاعل */
-.auth-card * {
-  transition: all 0.3s ease;
-}
-
-/* تحسين المظهر العام */
-.auth-container * {
-  box-sizing: border-box;
-}
-
-/* إضافة تأثير التحميل */
-.btn-primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn-primary:disabled:hover {
-  transform: none;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-}
-
-/* تحسين إضافي للشفافية */
-.auth-card .form-group label {
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 600;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-
-/* تأثير إضافي للحدود */
-.auth-card {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }

@@ -1,1 +1,96 @@
-<p>home works!</p>
+<!-- Hero Section with Slider -->
+<section id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="assets/banner1.jpg" class="d-block w-100" alt="Slide 1">
+      <div class="carousel-caption d-none d-md-block">
+        <h1 class="fw-bold">Design. Print. Express.</h1>
+        <p>Create custom printed products that reflect your style.</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="assets/banner2.jpg" class="d-block w-100" alt="Slide 2">
+      <div class="carousel-caption d-none d-md-block">
+        <h1 class="fw-bold">Bring Your Creativity to Life</h1>
+        <p>Start designing today with endless customization options.</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="assets/banner3.jpg" class="d-block w-100" alt="Slide 3">
+      <div class="carousel-caption d-none d-md-block">
+        <h1 class="fw-bold">Your Idea, Our Print</h1>
+        <p>High-quality print on demand for your unique designs.</p>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+</section>
+
+<!-- About Us Section -->
+<section class="about-us text-center py-5">
+  <h2 class="fw-bold mb-4">Who We Are</h2>
+  <p class="lead mx-auto w-75">
+    We are a leading print-on-demand company dedicated to providing high-quality custom printed products.
+    Our mission is to help you express your creativity through our wide range of customizable items.
+  </p>
+  <div class="d-flex justify-content-center gap-5 my-4">
+    <div class="icon text-center">
+      <img src="assets/quality.svg" alt="Quality Prints" width="50">
+      <p>Quality Prints</p>
+    </div>
+    <div class="icon text-center">
+      <img src="assets/delivery.svg" alt="Fast Delivery" width="50">
+      <p>Fast Delivery</p>
+    </div>
+    <div class="icon text-center">
+      <img src="assets/custom.svg" alt="Customizable Products" width="50">
+      <p>Customizable Products</p>
+    </div>
+  </div>
+</section>
+
+<!-- Promotional Video Section -->
+<section class="promotional-video text-center py-5 bg-light">
+  <h2 class="fw-bold mb-4">Watch How It Works</h2>
+  <div class="ratio ratio-16x9 w-75 mx-auto">
+    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            title="YouTube video"
+            allowfullscreen>
+    </iframe>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories py-5 text-center">
+  <h2 class="fw-bold mb-4">Categories</h2>
+  <div class="d-flex flex-wrap justify-content-center gap-4">
+    @for (category of categories; track category.id) {
+      <a class="category-card shadow-sm p-3 rounded-4 text-decoration-none text-dark"
+         [routerLink]="['/products']"
+         [queryParams]="{ category: category.id }"
+         style="width: 220px;">
+        <img [src]="category.image" [alt]="category.name" class="img-fluid rounded-3 mb-2" />
+        <h4 class="fw-bold">{{ category.name }}</h4>
+        <p class="small text-muted">{{ category.description }}</p>
+      </a>
+    }
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works py-5 text-center bg-light">
+  <h2 class="fw-bold mb-4">How It Works</h2>
+  <div class="d-flex flex-wrap justify-content-center gap-5">
+    @for (step of steps; track step.title) {
+      <div class="step-card">
+        <h4 class="fw-bold">{{ step.title }}</h4>
+        <p>{{ step.description }}</p>
+      </div>
+    }
+  </div>
+</section>

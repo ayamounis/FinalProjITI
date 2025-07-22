@@ -1,191 +1,127 @@
-<div class="w-50 mx-auto my-5">
+<div class="container-fluid d-flex login-page min-vh-100">
+
+  <!-- Left Side (Image) -->
+  <div class="w-50 d-none d-md-flex align-items-center justify-content-center ">
+    <img src="img/login/regg.svg" class="img-fluid login-img p-4" alt="Register illustration">
+  </div>
+  <!-- Right Side (Form) -->
+  <div class="w-50 d-flex flex-column justify-content-center login-container px-5">
+
+    <h2 class="fw-bold mb-3">Create your account </h2>
+    <p class="text-muted mb-4">
+      Join the community and bring your creativity to life with personalized prints!
+    </p>
+
     @if(apiError){
-    <div class="alert alert-danger p-1" role="alert">
+      <div class="alert alert-danger p-1" role="alert">
         {{apiError}}
-    
-    </div>
-    }
-
-  <form [formGroup]="RegisterForm" (ngSubmit)="register()">
-<!--Name-->
-    <!-- {{name?.errors | json}} -->
-    <div class="form-floating mb-3">
-      <input formControlName="username" type="text" class="form-control mb-2" id="username" placeholder="Username" />
-      <label for="username">Username</label>
-      @if (username?.errors && username?.touched)
-      {
-      <div class="alert alert-danger p-1" role="alert">
-
-        @if (username?.hasError('required'))
-        { <p class="m-0">Name is required</p>
-        }
-        @else if (username?.hasError('minlength'))
-        { <p class="m-0">Min length 3</p>
-        }
-        @else if (username?.hasError('maxlength'))
-        { <p class="m-0">Max length 11</p> }
-      </div>
-      }
-    </div>
-
-<!--FirstName-->
-    <div class="form-floating mb-3">
-      <input formControlName="firstName" type="text" class="form-control mb-2" id="firstName" placeholder="First Name" />
-      <label for="firstName">First Name</label>
-      @if (RegisterForm.get('firstName')?.errors && RegisterForm.get('firstName')?.touched)
-      {
-       <div class="alert alert-danger p-1" role="alert">
-        @if (RegisterForm.get('firstName')?.hasError('required')) {
-          <p class="m-0">First Name is required</p>
-        }
-        @else if (RegisterForm.get('firstName')?.hasError('minlength')) {
-          <p class="m-0">Min length 3</p>
-        }
-        @else if (RegisterForm.get('firstName')?.hasError('maxlength')) {
-          <p class="m-0">Max length 11</p>  
-        }
-      </div>
-      }
-    </div>
-<!--LastName-->
-    <div class="form-floating mb-3">
-      <input formControlName="lastName" type="text" class="form-control mb-2" id="lastName" placeholder="Last Name" />
-      <label for="lastName">Last Name</label>
-      @if (RegisterForm.get('lastName')?.errors && RegisterForm.get('lastName')?.touched)
-      {
-       <div class="alert alert-danger p-1" role="alert">
-        @if (RegisterForm.get('lastName')?.hasError('required')) {
-          <p class="m-0">Last Name is required</p>
-        }
-        @else if (RegisterForm.get('lastName')?.hasError('minlength')) {
-          <p class="m-0">Min length 3</p>
-        }
-        @else if (RegisterForm.get('lastName')?.hasError('maxlength')) {
-          <p class="m-0">Max length 11</p>  
-        }
-      </div>
-      }
-    </div>
-
-
-<!--Email-->
-      <div class="form-floating mb-3">
-        <input formControlName="email" type="email" class="form-control mb-2" id="email" placeholder="email" />
-        <label for="UserEmail">UserEmail</label>
-
-
-        @if (email?.errors && email?.touched)
-        {
-         <div class="alert alert-danger p-1" role="alert">
-          @if (email?.hasError('required')) {
-            <p class="m-0">Email is required</p>
-          }
-          @else if (email?.hasError('email')) {
-            <p class="m-0">Email is not valid</p>
-          }
-        </div>
-
-        }
-      </div>
-<!--Phone-->
-      <div class="form-floating mb-3">
-        <input formControlName="phoneNumber" type="tel" class="form-control mb-2" id="phoneNumber" placeholder="phoneNumber" />
-        <label for="UserPhone">UserPhone</label>
-
-        @if (phoneNumber?.errors && phoneNumber?.touched)
-        {
-         <div class="alert alert-danger p-1" role="alert">
-          @if (phoneNumber?.hasError('required')) {
-            <p class="m-0">phoneNumber is required</p>
-          }
-        </div>
-
-        }
-      </div>
-<!--Password-->
-<!-- alternative get password use this -->
- <!--   @let password = regisRegisterForm.get.password -->
-      <div class="form-floating mb-3">
-        <input formControlName="password" type="password" class="form-control mb-2" id="password" placeholder="Password" />
-        <label for="password">Password</label>
-
-        @if (RegisterForm.get('password')?.errors && RegisterForm.get('password')?.touched)
-        {
-         <div class="alert alert-danger p-1" role="alert">
-          @if (RegisterForm.get('password')?.hasError('required')) {
-            <p class="m-0">password is required</p>
-          }
-          @else if (RegisterForm.get('password')?.hasError('pattern')) {
-            <p class="m-0">password Should Start With Capital Letter</p>
-          }
-        </div>
-
-        }
-      </div>
-<!--rePassword-->
-
-      <div class="form-floating mb-3">
-        <input formControlName="rePassword" type="password" class="form-control mb-2" id="rePassword"
-          placeholder="Password" />
-        <label for="rePassword">Confirm Password</label>
-
-         @if (RegisterForm.get('rePassword')?.errors && RegisterForm.get('rePassword')?.touched)
-        {
-         <div class="alert alert-danger p-1" role="alert">
-          @if (RegisterForm.get('rePassword')?.hasError('required')) {
-            <p class="m-0">rePassword is required</p>
-          }
-          @else if (RegisterForm.get('rePassword')?.hasError('misMatch')) {
-            <p class="m-0">rePassword Should Match with Password </p>
-          }
-        </div>
-
-        }
-      </div>
-<!--Role-->
-
-<select formControlName="role" class="form-select" aria-label="Default select example">
-  <option value="Default" disabled selected>Select Your Account Type</option>
-  <option value="Seller">Seller</option>
-  <option value="User">User</option>
-</select>
-
-@let role = RegisterForm.get('role')?.value;
-
-@if (role === 'Seller') {
-  <div class="form-floating mb-3 my-2">
-    <input formControlName="storeName" type="text" class="form-control mb-2" id="storeName" placeholder="Store Name" />
-    <label for="storeName">Store Name</label>
-
-    @if (RegisterForm.get('storeName')?.errors && RegisterForm.get('storeName')?.touched) {
-      <div class="alert alert-danger p-1" role="alert">
-        @if (RegisterForm.get('storeName')?.hasError('required')) {
-          <p class="m-0">Store Name is required</p>
-        }
-        @else if (RegisterForm.get('storeName')?.hasError('minlength')) {
-          <p class="m-0">Min length 3</p>
-        }
-        @else if (RegisterForm.get('storeName')?.hasError('maxlength')) {
-          <p class="m-0">Max length 11</p>
-        }
       </div>
     }
-  </div>
 
-  <div class="form-floating mb-3">
-    <textarea formControlName="description" class="form-control mb-2" id="description" placeholder="Description"></textarea>
-    <label for="description">Description</label>
+    <form [formGroup]="RegisterForm" (ngSubmit)="register()" class="w-100">
+      <div class="row g-3">
 
-    @if (RegisterForm.get('description')?.errors && RegisterForm.get('description')?.touched) {
-      <div class="alert alert-danger p-1" role="alert">
-        @if (RegisterForm.get('description')?.hasError('maxlength')) {
-          <p class="m-0">Max length 100</p>
+        <!-- Username -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input formControlName="username" type="text" class="form-control" id="username" placeholder="Username" />
+            <label for="username">Username</label>
+          </div>
+        </div>
+
+        <!-- First Name -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input formControlName="firstName" type="text" class="form-control" id="firstName" placeholder="First Name" />
+            <label for="firstName">First Name</label>
+          </div>
+        </div>
+
+        <!-- Last Name -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input formControlName="lastName" type="text" class="form-control" id="lastName" placeholder="Last Name" />
+            <label for="lastName">Last Name</label>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input formControlName="email" type="email" class="form-control" id="email" placeholder="Email" />
+            <label for="email">Email</label>
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input formControlName="phoneNumber" type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number" />
+            <label for="phoneNumber">Phone Number</label>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input formControlName="password" type="password" class="form-control" id="password" placeholder="Password" />
+            <label for="password">Password</label>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input formControlName="rePassword" type="password" class="form-control" id="rePassword" placeholder="Confirm Password" />
+            <label for="rePassword">Confirm Password</label>
+          </div>
+        </div>
+
+        <!-- Role -->
+        <div class="form-floating mb-3">
+          <select formControlName="role" id="role" class="form-select" aria-label="Account Type">
+            <option value="" disabled selected hidden>Select Your Account Type</option>
+            <option value="Seller">Seller</option>
+            <option value="User">User</option>
+          </select>
+          <label for="role">Account Type</label>
+        </div>
+
+        <!-- Seller Fields -->
+        @let role = RegisterForm.get('role')?.value;
+        @if (role === 'Seller') {
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input formControlName="storeName" type="text" class="form-control" id="storeName" placeholder="Store Name" />
+              <label for="storeName">Store Name</label>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="form-floating">
+              <textarea formControlName="description" class="form-control" id="description" placeholder="Description" style="height: 100px;"></textarea>
+              <label for="description">Description</label>
+            </div>
+          </div>
         }
-      </div>
-    }
-  </div>
-} 
-      <button type="submit" class="btn btn-primary my-3">Register</button>
 
+        <!-- Submit -->
+        <div class="col-12 text-center">
+          <button type="submit" class="btn btn-success w-50 my-3">Register</button>
+          <p class="mt-3 text-muted">
+            Already have an account?
+            <a routerLink="/login" class="text-decoration-none fw-bold">Sign In</a>
+          </p>
+        </div>
+        <!-- Already have account -->
+        <!-- <div class="text-center">
+          <p class="mt-3 text-muted">
+            Already have an account?
+            <a routerLink="/login" class="text-decoration-none fw-bold">Sign In</a>
+          </p>
+        </div> -->
+      </div>
     </form>
+  </div>
+
 </div>

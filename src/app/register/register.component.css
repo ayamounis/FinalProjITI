@@ -1,0 +1,47 @@
+/* General page layout */
+.login-page {
+  min-height: 100vh;
+}
+
+/* Right form section */
+.login-container {
+  padding: 2rem 3rem;
+  background-color: #fff;
+}
+
+/* Responsive image style */
+.login-img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Adjust textarea height */
+textarea.form-control {
+  height: 120px !important;
+}
+
+/* Button hover */
+button[type="submit"]:hover {
+  opacity: 0.9;
+  transition: 0.3s;
+}
+
+/* Responsive fix for small devices */
+@media (max-width: 768px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .login-container, .login-img {
+    width: 100% !important;
+  }
+
+  .login-container {
+    padding: 2rem 1rem;
+  }
+
+  .login-img {
+    margin-top: 1.5rem;
+  }
+}

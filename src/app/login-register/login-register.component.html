@@ -1,9 +1,9 @@
-<div class="auth-container">
+<div class="auth-container w-75">
   <!-- Card Container -->
   <div class="auth-card mx-auto">
     <!-- Header with integrated tab buttons -->
-    <div class="card-header bg-dark text-black text-center p-4">
-      <h2 class="mb-3">{{ activeTab === 'login' ? 'Welcome Back' : 'Create Account' }}</h2>
+    <div class="card-header text-black text-center p-4">
+      <h2 class=" mb-3">{{ activeTab === 'login' ? 'Welcome Back' : 'Create Account' }}</h2>
       
       <!-- Tab Buttons Inside Form Header -->
       <div class="btn-group-toggle d-flex bg-light bg-opacity-25 rounded-pill p-1">
@@ -18,7 +18,7 @@
         </button>
         
         <button type="button"
-                class="btn flex-fill rounded-pill"
+                class="btn flex-fill rounded-pill "
                 [ngClass]="{ 
                   'btn-light text-primary shadow-sm': activeTab === 'register', 
                   'btn-outline-light text-white': activeTab !== 'register' 
