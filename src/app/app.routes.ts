@@ -15,7 +15,9 @@ export const routes: Routes = [
     //    { path: 'auth', component: LoginRegisterComponent, title: "Login/Register Page" },
        {path:'products', loadComponent: () => import('./products/products.component').then(m => m.ProductsComponent)},
        {path:'cart',canActivate: [authGuard],loadComponent: () => import('./cart/cart.component').then(m => m.CartComponent)},
-       { path: "home" ,component: HomeComponent, title: "Home Page" },
+      {path:'checkout',canActivate: [authGuard],loadComponent: () => import('./checkout/checkout.component').then(m => m.CheckoutComponent)},
+      {path:'paymentsuccess',canActivate: [authGuard],loadComponent: () => import('./payment-success/payment-success.component').then(m =>m.PaymentSuccessComponent)},
+      { path: "home" ,component: HomeComponent, title: "Home Page" },
        {path:'profile',loadComponent: () => import('./seller-profile/seller-profile.component').then(m => m.SellerProfileComponent)},
        { path: "**", redirectTo: 'home', pathMatch: 'full' },
 

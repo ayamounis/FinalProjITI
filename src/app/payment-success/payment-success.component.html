@@ -1,0 +1,91 @@
+<div class="success-container">
+  <div class="success-content">
+
+    @if (isLoading) {
+      <div class="loading-section">
+        <div class="spinner"></div>
+        <h2>Processing your request...</h2>
+        <p>Please wait while we confirm your payment.</p>
+      </div>
+    }
+
+    @if (!isLoading && order) {
+      <div class="success-section">
+        <div class="success-icon">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22,4 12,14.01 9,11.01"></polyline>
+          </svg>
+        </div>
+
+        <h1>Payment Successful!</h1>
+        <p class="success-message">Thank you for your order. Your payment has been confirmed.</p>
+
+        <div class="order-details">
+          <h3>Order Details</h3>
+          <div class="detail-row">
+            <span>Order ID:</span>
+            <span>#{{ order.orderId }}</span>
+          </div>
+          <div class="detail-row">
+            <span>Order Date:</span>
+            <span>{{ formatDate(order.orderDate) }}</span>
+          </div>
+          <div class="detail-row">
+            <span>Total Amount:</span>
+            <span class="amount">\${{ formatPrice(order.totalAmount) }}</span>
+          </div>
+          <div class="detail-row">
+            <span>Status:</span>
+            <span class="status">{{ getOrderStatus(order.status) }}</span>
+          </div>
+        </div>
+
+        <div class="order-items">
+          <h3>Products</h3>
+         @for (item of order.orderItems; track $index)
+ {
+            <div class="item-summary">
+              <div class="item-image">
+                <img [src]="item.customProduct.customImageUrl"
+                     [alt]="item.customProduct.customName"
+                     onerror="this.src='assets/images/placeholder.jpg'">
+              </div>
+              <div class="item-info">
+                <h4>{{ item.customProduct.customName }}</h4>
+                <p>Quantity: {{ item.quantity }}</p>
+                <p class="item-price">\${{ formatPrice(item.totalPrice) }}</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" (click)="goToOrders()">View Orders</button>
+          <button class="btn btn-secondary" (click)="continueShopping()">Continue Shopping</button>
+        </div>
+      </div>
+    }
+
+    @if (!isLoading && !order && hasError) {
+      <div class="error-section">
+        <div class="error-icon">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+
+        <h1>Payment Failed</h1>
+        <p class="error-message">{{ errorMessage }}</p>
+
+        <div class="actions">
+          <button class="btn btn-primary" (click)="goToCart()">Back to Cart</button>
+          <button class="btn btn-secondary" (click)="continueShopping()">Continue Shopping</button>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

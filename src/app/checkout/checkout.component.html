@@ -1,0 +1,158 @@
+<div class="checkout-container">
+  <div class="checkout-header">
+    <h1>Checkout</h1>
+    <button type="button" class="back-btn" (click)="router.navigate(['/cart'])">
+      ← Back to Cart
+    </button>
+  </div>
+
+  @if (isLoadingCart; as loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading your cart...</p>
+    </div>
+  }
+
+  @if (!isLoadingCart && cartItems.length > 0; as showCheckout) {
+    <div class="checkout-content">
+      
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <h2>Order Summary</h2>
+        <div class="cart-items">
+          @for (item of cartItems; track $index) {
+            <div class="cart-item">
+              <div class="item-image">
+                <img [src]="item.customProduct.customImageUrl" 
+                     [alt]="item.customProduct.customName"
+                     onerror="this.src='assets/images/placeholder.jpg'">
+              </div>
+              <div class="item-details">
+                <h3>{{ item.customProduct.customName }}</h3>
+                <p class="item-description">{{ item.customProduct.customDescription }}</p>
+                <div class="item-meta">
+                  <span class="quantity">Qty: {{ item.quantity }}</span>
+                  <span class="unit-price">${{ formatPrice(item.customProduct.price) }} each</span>
+                </div>
+              </div>
+              <div class="item-total">
+                ${{ formatPrice(item.customProduct.price * item.quantity) }}
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="order-totals">
+          <div class="total-row">
+            <span>Total Items:</span>
+            <span>{{ getTotalItems() }}</span>
+          </div>
+          <div class="total-row">
+            <span>Subtotal:</span>
+            <span>${{ formatPrice(getTotalPrice()) }}</span>
+          </div>
+          <div class="total-row">
+            <span>Shipping:</span>
+            <span>Free</span>
+          </div>
+          <div class="total-row final-total">
+            <span>Total:</span>
+            <span>${{ formatPrice(getTotalPrice()) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkout Form -->
+      <div class="checkout-form">
+        <form [formGroup]="checkoutForm" (ngSubmit)="processOrder()">
+          
+          <!-- Shipping Info -->
+          <div class="form-section">
+            <h2>Shipping Information</h2>
+            <div class="form-group">
+              <label for="shippingAddress">Shipping Address *</label>
+              <textarea 
+                id="shippingAddress"
+                formControlName="shippingAddress"
+                rows="4"
+                placeholder="Enter your complete shipping address..."
+                [class.error]="isFieldInvalid('shippingAddress')">
+              </textarea>
+              @if (isFieldInvalid('shippingAddress')) {
+                <div class="error-message">
+                  {{ getFieldError('shippingAddress') }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-section">
+            <h2>Payment Method</h2>
+            <div class="payment-methods">
+              <div class="payment-option">
+                <input 
+                  type="radio" 
+                  id="stripe" 
+                  name="paymentMethod" 
+                  value="stripe"
+                  [checked]="paymentMethod === 'stripe'"
+                  (change)="onPaymentMethodChange('stripe')">
+                <label for="stripe" class="payment-label">
+                  <div class="payment-info">
+                    <div class="payment-name">
+                      <strong>Credit/Debit Card</strong>
+                      <span class="payment-powered">Powered by Stripe</span>
+                    </div>
+                    <div class="payment-description">
+                      Secure payment with credit or debit card
+                    </div>
+                  </div>
+                  <div class="payment-logos">
+                    <img src="assets/images/visa.png" alt="Visa" onerror="this.style.display='none'">
+                    <img src="assets/images/mastercard.png" alt="Mastercard" onerror="this.style.display='none'">
+                    <img src="assets/images/stripe.png" alt="Stripe" onerror="this.style.display='none'">
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="form-actions">
+            <button 
+              type="button" 
+              class="btn btn-secondary"
+              (click)="router.navigate(['/cart'])"
+              [disabled]="isProcessing">
+              Back to Cart
+            </button>
+            
+            <button 
+              type="submit" 
+              class="btn btn-primary"
+              [disabled]="isProcessing || checkoutForm.invalid">
+              @if (!isProcessing) {
+                Complete Order
+              } @else {
+                <span class="spinner-small"></span> Processing...
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  @if (!isLoadingCart && cartItems.length === 0) {
+    <div class="empty-cart">
+      <div class="empty-cart-content">
+        <h2>Your cart is empty</h2>
+        <p>Add some items to your cart to proceed with checkout.</p>
+        <button class="btn btn-primary" (click)="router.navigate(['/products'])">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+  }
+</div>

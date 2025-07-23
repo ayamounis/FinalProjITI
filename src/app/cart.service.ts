@@ -40,9 +40,11 @@ export class CartService {
   private getHttpOptions() {
     const token = this.authService.getToken();
     return {
+      
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
+      
       })
     };
   }

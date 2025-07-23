@@ -1,42 +1,5 @@
-// import { Component, inject } from '@angular/core';
-// import { RouterModule, RouterOutlet } from '@angular/router';
-// import { LoginComponent } from '../login/login.component';
-// import { AuthService } from '../auth.service';
-// import { Router } from '@angular/router';
-
-// @Component({
-//   selector: 'app-navbar',
-//   standalone: true,
-//   imports: [RouterModule],
-//   templateUrl: './navbar.component.html',
-//   styleUrl: './navbar.component.css'
-// })
-// export class NavbarComponent {
-//   isLoggedIn: boolean = false;
-  _authService = inject(AuthService);
-//   _router = inject(Router);
-
-  constructor() {
-    this._authService.userData.subscribe({
-      next: (res) => {
-        this.isLoggedIn = res ? true : false;
-        console.log(res, "Welcome in Our Website");
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
-    console.log(this._authService.userData.value, "Hello Welcome in Our Website");
-
-
-//   }
-//   logout() {
-//     this._authService.logout(); //Logout
-//     this._router.navigate(['/auth']); //Redirect to Login Page
-//   }
-// }
-import { Component, OnInit, OnDestroy,inject } from '@angular/core';
-import { AuthService } from '../auth.service'; // تأكد من المسار الصحيح
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -53,33 +16,61 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   isSeller: boolean = false;
   userRole: string = '';
-  _router = inject(Router);
+  
+  // Services injection
+  private authService = inject(AuthService);
+  private _router = inject(Router);
+  
+  // Subscriptions
   private authSubscription: Subscription = new Subscription();
   private roleSubscription: Subscription = new Subscription();
 
-  // constructor(private authService: AuthService) {}
+  constructor() {
+    // يمكنك إضافة أي initialization logic هنا إذا لزم الأمر
+  }
 
   ngOnInit(): void {
     // الاشتراك في تغييرات حالة تسجيل الدخول
-    this.authSubscription = this.authService.userData.subscribe(token => {
-      this.isLoggedIn = !!token;
+    this.authSubscription = this.authService.userData.subscribe({
+      next: (token) => {
+        this.isLoggedIn = !!token;
+        console.log(token, "Welcome in Our Website");
+      },
+      error: (err) => {
+        console.log(err);
+        this.isLoggedIn = false;
+      }
     });
 
     // الاشتراك في تغييرات دور المستخدم
-    this.roleSubscription = this.authService.userRole.subscribe(role => {
-      this.userRole = role;
-      this.isSeller = role.toLowerCase() === 'seller';
+    this.roleSubscription = this.authService.userRole.subscribe({
+      next: (role) => {
+        this.userRole = role;
+        this.isSeller = role.toLowerCase() === 'seller';
+      },
+      error: (err) => {
+        console.log('Role subscription error:', err);
+        this.userRole = '';
+        this.isSeller = false;
+      }
     });
+
+    // Log current user data
+    console.log(this.authService.userData.value, "Hello Welcome in Our Website");
   }
 
   ngOnDestroy(): void {
-    this.authSubscription.unsubscribe();
-    this.roleSubscription.unsubscribe();
+    // Clean up subscriptions to prevent memory leaks
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+    if (this.roleSubscription) {
+      this.roleSubscription.unsubscribe();
+    }
   }
 
   logout(): void {
-    this.authService.logout();
-    this._router.navigate(['/auth']);
-    // يمكنك إضافة navigation للصفحة الرئيسية هنا إذا أردت
+    this.authService.logout(); // Logout
+    this._router.navigate(['/auth']); // Redirect to Login Page
   }
 }
