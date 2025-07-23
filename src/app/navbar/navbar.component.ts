@@ -13,20 +13,20 @@
 // })
 // export class NavbarComponent {
 //   isLoggedIn: boolean = false;
-//   _authService = inject(AuthService);
+  _authService = inject(AuthService);
 //   _router = inject(Router);
 
-//   constructor() {
-//     this._authService.userData.subscribe({
-//       next: (res) => {
-//         this.isLoggedIn = res ? true : false;
-//         console.log(res, "Welcome in Our Website");
-//       },
-//       error: (err) => {
-//         console.log(err);
-//       }
-//     })
-//     console.log(this._authService.userData.value, "Hello Welcome in Our Website");
+  constructor() {
+    this._authService.userData.subscribe({
+      next: (res) => {
+        this.isLoggedIn = res ? true : false;
+        console.log(res, "Welcome in Our Website");
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
+    console.log(this._authService.userData.value, "Hello Welcome in Our Website");
 
 
 //   }
@@ -57,7 +57,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private authSubscription: Subscription = new Subscription();
   private roleSubscription: Subscription = new Subscription();
 
-  constructor(private authService: AuthService) {}
+  // constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     // الاشتراك في تغييرات حالة تسجيل الدخول
