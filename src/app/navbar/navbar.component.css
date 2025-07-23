@@ -1,0 +1,21 @@
+.navbar{
+    background-color: #e1edfa;
+    color: #1100ab;
+}
+.navbar .nav-link {
+  color: #1100ab !important;
+  font-weight: 700 !important;
+}
+  /* .navbar-container {
+    padding-left: 30px;
+    padding-right: 30px;
+  } */
+
+  .navbar-nav .nav-link {
+    font-weight: bold;
+    color: #1100ab !important;
+  }
+
+  .nav-link.active {
+    color: orange !important;
+  }

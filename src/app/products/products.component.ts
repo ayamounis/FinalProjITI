@@ -1,73 +1,72 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router'; // إضافة هذا
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../product.service';
 import { Product } from '../product';
-import { isPlatformBrowser } from '@angular/common';
-import { PLATFORM_ID, Inject } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { CartService, AddToCartRequest } from '../cart.service';
 import { CustomProductService, CreateCustomProductRequest } from '../custom-product.service';
-import { Router } from '@angular/router';
+import { CategoryService } from '../category.service';
+
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule], // إضافة RouterModule هنا
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css'
 })
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
-  
-  // Filter properties
+
   selectedCategory: number = 0;
   minPrice: number = 0;
   maxPrice: number = 1000;
   searchTerm: string = '';
-  
-  // Loading states
+
   isLoadingProducts: boolean = false;
   addingToCart: { [key: number]: boolean } = {};
-  
-  // Error handling
+
   errorMessage: string = '';
-  
-  // Categories for dropdown
-  categories = [
-    { id: 0, name: 'All Categories' },
-    { id: 1, name: 'Clothing' },
-    { id: 2, name: 'Mugs' },
-    { id: 3, name: 'Bags' },
-    { id: 4, name: 'Stationery' },
-    { id: 5, name: 'Accessories' }
-  ];
+
+  categories: any[] = [];
 
   constructor(
     private productService: ProductService,
     private authService: AuthService,
     private cartService: CartService,
     private customProductService: CustomProductService,
+    private categoryService: CategoryService,
     private router: Router,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.loadProducts();
+      this.categories = this.categoryService.getCategories();
+
+      this.route.queryParams.subscribe(params => {
+        const categoryFromUrl = +params['category'];
+        if (categoryFromUrl) {
+          this.selectedCategory = categoryFromUrl;
+        }
+        this.loadProducts();
+      });
     }
   }
 
   loadProducts(): void {
     this.isLoadingProducts = true;
     this.errorMessage = '';
-    
+
     this.productService.getAllProducts().subscribe({
       next: (data) => {
         this.products = data;
-        this.filteredProducts = [...data];
+        this.applyFilters(); // ✅ هنا فلترة بعد الـ API
         this.isLoadingProducts = false;
       },
       error: (error) => {
@@ -80,20 +79,13 @@ export class ProductsComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredProducts = this.products.filter(product => {
-      // Category filter
       const categoryMatch = this.selectedCategory === 0 || product.category === +this.selectedCategory;
-      
-      // Price range filter
       const priceMatch = product.basePrice >= this.minPrice && product.basePrice <= this.maxPrice;
-      
-      // Search term filter
       const searchMatch = this.searchTerm === '' ||
         product.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         product.description.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
-      // Only active products
       const activeMatch = product.isActive;
-      
+
       return categoryMatch && priceMatch && searchMatch && activeMatch;
     });
   }
@@ -132,20 +124,16 @@ export class ProductsComponent implements OnInit {
     return date.toLocaleDateString('en-US');
   }
 
-  // Check if user is logged in
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
 
-  // Add to cart functionality with better error handling
   addToCart(product: Product): void {
-    // Check if user is logged in
     if (!this.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }
 
-    // Check if token exists
     const token = this.authService.getToken();
     if (!token) {
       this.showErrorMessage('Please login to add items to cart.');
@@ -153,10 +141,8 @@ export class ProductsComponent implements OnInit {
       return;
     }
 
-    // Set loading state for this specific product
     this.addingToCart[product.productTemplateId] = true;
 
-    // First, create a custom product from the product template
     const customProductRequest: CreateCustomProductRequest = {
       customName: product.name,
       customDescription: product.description,
@@ -167,7 +153,6 @@ export class ProductsComponent implements OnInit {
 
     this.customProductService.createCustomProduct(customProductRequest).subscribe({
       next: (customProduct) => {
-        // Now add the custom product to cart
         const cartItem: AddToCartRequest = {
           customProductId: customProduct.customProductId,
           quantity: 1
@@ -182,7 +167,7 @@ export class ProductsComponent implements OnInit {
           error: (error) => {
             console.error('Error adding product to cart:', error);
             this.addingToCart[product.productTemplateId] = false;
-            
+
             if (error.message.includes('Authentication')) {
               this.showErrorMessage('Please login again to add items to cart.');
               this.authService.logout();
@@ -196,7 +181,7 @@ export class ProductsComponent implements OnInit {
       error: (error) => {
         console.error('Error creating custom product:', error);
         this.addingToCart[product.productTemplateId] = false;
-        
+
         if (error.message.includes('Authentication')) {
           this.showErrorMessage('Please login again to add items to cart.');
           this.authService.logout();
@@ -210,33 +195,26 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  // Check if product is being added to cart
   isAddingToCart(productId: number): boolean {
     return this.addingToCart[productId] || false;
   }
 
-  // Success message (replace with proper toast service)
   showSuccessMessage(message: string): void {
     if (isPlatformBrowser(this.platformId)) {
-      
       alert(message);
     }
   }
 
-  // Error message (replace with proper toast service)
   showErrorMessage(message: string): void {
     if (isPlatformBrowser(this.platformId)) {
-     
       alert(message);
     }
   }
 
-  // Navigate to login page
   goToLogin(): void {
     this.router.navigate(['/login']);
   }
 
-  // Retry loading products
   retryLoadProducts(): void {
     this.loadProducts();
   }

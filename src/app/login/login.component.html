@@ -1,54 +1,72 @@
-<div class="w-50 mx-auto my-5">
+<div class="container-fluid d-flex login-page ">
+
+  <!-- Left Side (Form) -->
+  <div class="w-50 d-flex flex-column justify-content-center login-container">
+
+    <h2 class="fw-bold mb-3">Welcome back! </h2>
+    <p class="text-muted mb-4">
+      Every design tells a story — let yours begin here ..!<br>
+      Sign in now and bring your ideas to life with custom prints made just for you.
+    </p>
+
     @if(apiError){
-    <div class="alert alert-danger p-1" role="alert">
+      <div class="alert alert-danger p-1" role="alert">
         {{apiError}}
-    
-    </div>
+      </div>
     }
 
-  <form [formGroup]="loginForm" (ngSubmit)="login()">
-<!--Name-->
-    <!-- {{name?.errors | json}} -->
-    <div class="form-floating mb-3">
-      <input formControlName="email" type="text" class="form-control mb-2" id="email" placeholder="Username" />
-      <label for="email">Email</label>
-      @if (email?.errors && email?.touched)
-      {
-      <div class="alert alert-danger p-1" role="alert">
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="w-100">
 
-        @if (email?.hasError('required'))
-        { <p class="m-0">Email is required</p>
-        }
-           @else if (email?.hasError('email')) {
-            <p class="m-0">Email is not valid</p>
-          }
-      </div>
-      }
-    </div>
-
-
-
-<!--Password-->
-<!-- alternative get password use this -->
- <!--   @let password = loginForm.get.password -->
+      <!-- Email -->
       <div class="form-floating mb-3">
-        <input formControlName="password" type="password" class="form-control mb-2" id="password" placeholder="Password" />
-        <label for="password">Password</label>
-
-        @if (loginForm.get('password')?.errors && loginForm.get('password')?.touched)
-        {
-         <div class="alert alert-danger p-1" role="alert">
-          @if (loginForm.get('password')?.hasError('required')) {
-            <p class="m-0">password is required</p>
-          }
-          @else if (loginForm.get('password')?.hasError('pattern')) {
-            <p class="m-0">password Should Start With Capital Letter</p>
-          }
-        </div>
-
+        <input formControlName="email" type="text" class="form-control" id="email" placeholder="Email or Phone">
+        <label for="email">Email or Phone</label>
+        @if (email?.errors && email?.touched) {
+          <div class="alert alert-danger p-1 mt-1">
+            @if (email?.hasError('required')) { <p class="m-0">Email is required</p> }
+            @else if (email?.hasError('email')) { <p class="m-0">Invalid email format</p> }
+          </div>
         }
       </div>
-      <button type="submit" class="btn btn-primary">Login</button>
+
+      <!-- Password -->
+      <div class="form-floating mb-2">
+        <input formControlName="password" type="password" class="form-control" id="password" placeholder="Password">
+        <label for="password">Password</label>
+        @if (loginForm.get('password')?.errors && loginForm.get('password')?.touched) {
+          <div class="alert alert-danger p-1 mt-1">
+            @if (loginForm.get('password')?.hasError('required')) { <p class="m-0">Password is required</p> }
+            @else if (loginForm.get('password')?.hasError('pattern')) { <p class="m-0">Password should start with a capital letter</p> }
+          </div>
+        }
+      </div>
+
+      <div class="text-end mb-3">
+        <a href="#" class="text-danger text-decoration-none">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 py-2 mb-4">Sign In</button>
+
+      <!-- <div class="text-center mb-4">
+        <span class="text-muted">or do it via other accounts</span>
+        <div class="d-flex justify-content-center gap-3 mt-3 social-btns">
+          <button class="btn btn-outline-secondary rounded-circle"><i class="fab fa-google"></i></button>
+          <button class="btn btn-outline-secondary rounded-circle"><i class="fab fa-apple"></i></button>
+          <button class="btn btn-outline-secondary rounded-circle"><i class="fab fa-facebook-f"></i></button>
+        </div>
+      </div> -->
+
+      <div class="text-center">
+        <span class="text-muted">Don’t have an account?</span>
+        <a routerLink="/register" class="fw-bold text-decoration-none">Sign Up</a>
+      </div>
 
     </form>
+  </div>
+
+  <!-- Right Side (Image) -->
+  <div class="w-50  d-none d-md-flex align-items-center justify-content-center ">
+    <img src="img/login/store.svg" class="img-fluid login-img p-4" alt="Login image" >
+  </div>
+
 </div>
