@@ -1,0 +1,190 @@
+<!-- seller-profile.component.html -->
+<div class="seller-profile-container">
+  <!-- Error Image Section -->
+  @if (showErrorImage && !loading) {
+    <div class="error-container">
+      <div class="error-content">
+        <img 
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl1t08JNP-LMM1pfRugcWgEJr2VI0Z6Kqy8qNaTlzKGQNAcgHI7OH20w&s"
+          alt="Error occurred" 
+          class="error-image"
+        />
+        <h3 class="error-title">Sorry! An error occurred</h3>
+        <p class="error-text">We couldn't load your business profile. Please try again.</p>
+        <button 
+          type="button" 
+          class="retry-btn-primary"
+          (click)="retryLoadProfile()"
+        >
+          <span class="retry-icon">🔄</span>
+          Try Again
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  }
+
+  <!-- Text Error Message (for session expired, etc.) -->
+  @if (error && !showErrorImage) {
+    <div class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="loadProfile()" class="retry-btn">Retry</button>
+    </div>
+  }
+
+  <!-- Profile Content - shows only when no error image and not loading -->
+  @if (!showErrorImage && !loading && !error) {
+    <div class="profile-content">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <h1>Business Profile</h1>
+        @if (sellerProfile) {
+          <div class="verification-badge" [class.verified]="sellerProfile.isVerified">
+            <span>{{ sellerProfile.isVerified ? 'Verified' : 'Not Verified' }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Profile Form -->
+      <div class="profile-form-section">
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+          <div class="form-group">
+            <label for="storeName">Store Name <span class="required">*</span></label>
+            <input 
+              id="storeName" 
+              type="text" 
+              formControlName="storeName" 
+              class="form-control"
+              [class.invalid]="isFormControlInvalid('storeName')"
+            >
+            @if (isFormControlInvalid('storeName')) {
+              <div class="error-text">
+                {{ getFormControlError('storeName') }}
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="description">Store Description <span class="required">*</span></label>
+            <textarea 
+              id="description" 
+              formControlName="description" 
+              rows="4" 
+              class="form-control"
+              [class.invalid]="isFormControlInvalid('description')"
+            ></textarea>
+            @if (isFormControlInvalid('description')) {
+              <div class="error-text">
+                {{ getFormControlError('description') }}
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address <span class="required">*</span></label>
+            <input 
+              id="address" 
+              type="text" 
+              formControlName="address" 
+              class="form-control"
+              [class.invalid]="isFormControlInvalid('address')"
+            >
+            @if (isFormControlInvalid('address')) {
+              <div class="error-text">
+                {{ getFormControlError('address') }}
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+            <input 
+              id="phoneNumber" 
+              type="tel" 
+              formControlName="phoneNumber" 
+              class="form-control"
+              [class.invalid]="isFormControlInvalid('phoneNumber')"
+            >
+            @if (isFormControlInvalid('phoneNumber')) {
+              <div class="error-text">
+                {{ getFormControlError('phoneNumber') }}
+              </div>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="submit-btn" 
+              [disabled]="profileForm.invalid || updateLoading"
+            >
+              @if (updateLoading) {
+                <span class="spinner-small"></span>
+              }
+              {{ updateLoading ? 'Updating...' : 'Update Business Profile' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Products Section -->
+      <div class="products-section">
+        <h2>My Products ({{ products.length }})</h2>
+        
+        @if (productsLoading) {
+          <div class="loading-message">
+            Loading products...
+          </div>
+        }
+
+        @if (!productsLoading && products.length === 0) {
+          <div class="no-products">
+            <p>No products available yet.</p>
+            <button class="add-product-btn" (click)="navigateToAddProduct()">Add New Product</button>
+          </div>
+        }
+
+        @if (!productsLoading && products.length > 0) {
+          <div class="products-grid">
+            @for (product of products; track product.productTemplateId) {
+              <div class="product-card">
+                <div class="product-image">
+                  <img [src]="product.imageUrl" [alt]="product.name" onerror="this.src='assets/placeholder-product.png'">
+                  <div class="product-status" [class.active]="product.isActive">
+                    {{ product.isActive ? 'Active' : 'Inactive' }}
+                  </div>
+                </div>
+                <div class="product-info">
+                  <h3>{{ product.name }}</h3>
+                  <p class="product-description">{{ product.description }}</p>
+                  <div class="product-price">{{ product.basePrice }} EGP</div>
+                  <div class="product-date">{{ formatDate(product.createdAt) }}</div>
+                </div>
+                <div class="product-actions">
+                  <button class="edit-btn" (click)="navigateToEditProduct(product.productTemplateId)">Edit</button>
+                  <button class="toggle-btn" [class.deactivate]="product.isActive">
+                    {{ product.isActive ? 'Deactivate' : 'Activate' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Success Message -->
+      @if (successMessage) {
+        <div class="success-message">
+          {{ successMessage }}
+        </div>
+      }
+    </div>
+  }
+</div>
