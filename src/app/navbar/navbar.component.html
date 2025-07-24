@@ -1,49 +1,13 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Logo</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-      aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarContent">
-      @if (isLoggedIn) {
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-
-        <li class="nav-item">
-          <a class="nav-link active" routerLink="home">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="products">Products</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" (click)="logout()" style="cursor: pointer;">Logout</a>
-        </li>
-           @if (isSeller) {
-         
-            <li class="nav-item">
-              <a class="nav-link" routerLink="profile">Profile</a>
-            </li>
-            
-          }
-        <li class="nav-item">
-          <a class="nav-link" routerLink="cart">Cart</a>
-        </li>
-      </ul>
-   
-      }
-      @else {
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <!-- <li class="nav-item">
-          <a class="nav-link" routerLink="register">register</a>
-        </li> -->
-        <li class="nav-item">
-          <!-- <a class="nav-link" routerLink="login">login</a> -->
-          <a class="nav-link" routerLink="auth">Login/Register</a>
-        </li>
-      </ul>
-      }
-
+<div class="navbar-wrapper">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="img/logo_no_bg.png" alt="Logo" style="height: 50px">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
       <div class="collapse navbar-collapse" id="navbarContent">
         @if (isLoggedIn) {
@@ -56,6 +20,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="cart">Cart</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="Design">Design Now</a>
           </li>
 
         </ul>
@@ -72,8 +39,7 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="products">Products</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="Design">Design Now</a>
+
         </ul>
         <ul class="navbar-nav ms-auto">
           <!-- <li class="nav-item">
@@ -88,6 +54,5 @@
         }
       </div>
     </div>
-  </div>
-</nav>
-
+  </nav>
+</div>

@@ -26,6 +26,16 @@ export interface AddToCartRequest {
   quantity: number;
 }
 
+export interface CheckoutResponse {
+  orderId: number;
+  totalAmount: number;
+  status: number;
+  orderDate: string;
+  shippingAddress: string;
+  orderItems: any[];
+  payments: any[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -40,16 +50,13 @@ export class CartService {
   private getHttpOptions() {
     const token = this.authService.getToken();
     return {
-      
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-      
       })
     };
   }
 
-  // إضافة منتج إلى السلة
   addToCart(item: AddToCartRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}`, item, this.getHttpOptions())
       .pipe(
@@ -57,7 +64,6 @@ export class CartService {
       );
   }
 
-  // جلب محتويات السلة
   getCartItems(): Observable<CartItem[]> {
     return this.http.get<CartItem[]>(`${this.apiUrl}`, this.getHttpOptions())
       .pipe(
@@ -65,7 +71,6 @@ export class CartService {
       );
   }
 
-  // تحديث كمية المنتج في السلة
   updateCartItem(cartItemId: number, quantity: number): Observable<any> {
     return this.http.put(`${this.apiUrl}`, { cartItemId, quantity }, this.getHttpOptions())
       .pipe(
@@ -73,7 +78,6 @@ export class CartService {
       );
   }
 
-  // حذف منتج من السلة
   removeFromCart(cartItemId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${cartItemId}`, this.getHttpOptions())
       .pipe(
@@ -81,7 +85,6 @@ export class CartService {
       );
   }
 
-  // مسح السلة بالكامل
   clearCart(): Observable<any> {
     return this.http.delete(`${this.apiUrl}`, this.getHttpOptions())
       .pipe(
@@ -89,12 +92,25 @@ export class CartService {
       );
   }
 
+  checkout(shippingAddress: string): Observable<CheckoutResponse> {
+    return this.http.post<CheckoutResponse>(
+      `${this.apiUrl}/Checkout`,
+      JSON.stringify(shippingAddress),
+      this.getHttpOptions()
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: any): Observable<never> {
     console.error('CartService Error:', error);
     
     let errorMessage = 'An error occurred';
     
-    if (error.status === 401) {
+    if (error.status === 0) {
+      // CORS أو network error
+      errorMessage = 'Connection failed. Please check if the server is running and CORS is configured properly.';
+    } else if (error.status === 401) {
       errorMessage = 'Authentication required. Please login again.';
     } else if (error.status === 403) {
       errorMessage = 'Access forbidden.';
@@ -104,6 +120,8 @@ export class CartService {
       errorMessage = 'Server error. Please try again later.';
     } else if (error.error?.message) {
       errorMessage = error.error.message;
+    } else if (error.message) {
+      errorMessage = error.message;
     }
     
     return throwError(() => new Error(errorMessage));

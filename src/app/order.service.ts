@@ -43,19 +43,6 @@ export interface Order {
   payments: Payment[];
 }
 
-export interface CreateOrderRequest {
-  totalAmount: number;
-  status: number;
-  orderDate: string;
-  shippingAddress: string;
-  orderItems: {
-    quantity: number;
-    unitPrice: number;
-    totalPrice: number;
-    customProductId: number; // تأكد من إرسال ID بدلاً من الكائن كامل
-  }[];
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -78,55 +65,20 @@ export class OrderService {
 
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
-    
-    if (error.status === 405) {
-      return throwError(() => new Error('Method not allowed. Please check the API endpoint configuration.'));
-    } else if (error.status === 401) {
+
+    if (error.status === 401) {
       return throwError(() => new Error('Authentication failed. Please login again.'));
     } else if (error.status === 403) {
       return throwError(() => new Error('Access forbidden. You don\'t have permission to perform this action.'));
     } else if (error.status === 404) {
-      return throwError(() => new Error('API endpoint not found. Please check the server configuration.'));
+      return throwError(() => new Error('Resource not found.'));
     } else if (error.status === 0) {
-      return throwError(() => new Error('Network error. Please check your connection and CORS configuration.'));
+      return throwError(() => new Error('Network error. Please check your connection.'));
     }
-    
+
     return throwError(() => new Error(error.error?.message || 'An unexpected error occurred'));
   }
 
-  // إنشاء طلب جديد - تجربة endpoints مختلفة
-  createOrder(orderData: CreateOrderRequest): Observable<Order> {
-    console.log('Creating order with data:', orderData);
-    
-    // تنظيف البيانات قبل الإرسال
-    const cleanOrderData = {
-      ...orderData,
-      orderItems: orderData.orderItems.map(item => ({
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        totalPrice: item.totalPrice,
-        customProductId: item.customProductId
-      }))
-    };
-
-    return this.http.post<Order>(`${this.apiUrl}/Orders`, cleanOrderData, {
-      headers: this.getHeaders()
-    }).pipe(
-      retry(1), // إعادة المحاولة مرة واحدة
-      catchError(this.handleError.bind(this))
-    );
-  }
-
-  // طريقة بديلة لإنشاء الطلب
-  createOrderAlternative(orderData: CreateOrderRequest): Observable<Order> {
-    return this.http.post<Order>(`${this.apiUrl}/Order/Create`, orderData, {
-      headers: this.getHeaders()
-    }).pipe(
-      catchError(this.handleError.bind(this))
-    );
-  }
-
-  // الحصول على جميع الطلبات للمستخدم
   getOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(`${this.apiUrl}/Orders`, {
       headers: this.getHeaders()
@@ -135,7 +87,6 @@ export class OrderService {
     );
   }
 
-  // الحصول على طلب محدد
   getOrder(orderId: number): Observable<Order> {
     return this.http.get<Order>(`${this.apiUrl}/Orders/${orderId}`, {
       headers: this.getHeaders()
@@ -144,7 +95,6 @@ export class OrderService {
     );
   }
 
-  // تحديث حالة الطلب
   updateOrderStatus(orderId: number, status: number): Observable<Order> {
     return this.http.put<Order>(`${this.apiUrl}/Orders/${orderId}`, 
       { status }, 
@@ -154,9 +104,13 @@ export class OrderService {
     );
   }
 
-  // إضافة دفعة للطلب
-  addPaymentToOrder(orderId: number, paymentData: any): Observable<Payment> {
-    return this.http.post<Payment>(`${this.apiUrl}/Orders/${orderId}/Payments`,
+  addPaymentToOrder(orderId: number, paymentData: {
+    amount: number;
+    method: number;
+    transactionId: string;
+  }): Observable<Payment> {
+    return this.http.post<Payment>(
+      `${this.apiUrl}/Orders/${orderId}/Payments`,
       paymentData,
       { headers: this.getHeaders() }
     ).pipe(
@@ -164,18 +118,17 @@ export class OrderService {
     );
   }
 
-  // الحصول على دفعة محددة
   getPayment(orderId: number, paymentId: number): Observable<Payment> {
-    return this.http.get<Payment>(`${this.apiUrl}/Orders/${orderId}/Payments/${paymentId}`, {
-      headers: this.getHeaders()
-    }).pipe(
+    return this.http.get<Payment>(
+      `${this.apiUrl}/Orders/${orderId}/Payments/${paymentId}`, 
+      { headers: this.getHeaders() }
+    ).pipe(
       catchError(this.handleError.bind(this))
     );
   }
 
-  // للتحقق من صحة الـ API
   testConnection(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/Orders/test`, {
+    return this.http.get(`${this.apiUrl}/Orders`, {
       headers: this.getHeaders()
     }).pipe(
       catchError(this.handleError.bind(this))

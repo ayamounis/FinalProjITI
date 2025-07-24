@@ -1,29 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-
-export interface PaymentIntentRequest {
-  orderId: number;
-}
 
 export interface CheckoutSessionRequest {
   orderId: number;
 }
 
-export interface PaymentIntentResponse {
-  clientSecret: string;
-  paymentIntentId: string;
-}
-
 export interface CheckoutSessionResponse {
-  sessionId: string;
-  sessionUrl: string;
-}
-
-export interface WebhookEvent {
-  type: string;
-  data: any;
+  sessionId?: string;
+  sessionUrl?: string;
+  url?: string; 
 }
 
 @Injectable({
@@ -44,35 +32,41 @@ export class PaymentService {
       'Authorization': `Bearer ${token}`
     });
   }
-
-  // إنشاء Payment Intent للدفع المباشر
-  createPaymentIntent(request: PaymentIntentRequest): Observable<PaymentIntentResponse> {
-    return this.http.post<PaymentIntentResponse>(`${this.apiUrl}/Payments/CreatePaymentIntent`, 
-      request, 
-      { headers: this.getHeaders() }
-    );
-  }
-
-  // إنشاء Checkout Session للإعادة توجيه إلى صفحة الدفع
   createCheckoutSession(request: CheckoutSessionRequest): Observable<CheckoutSessionResponse> {
-    return this.http.post<CheckoutSessionResponse>(`${this.apiUrl}/Payments/CreateCheckoutSession`, 
-      request, 
+    return this.http.post<CheckoutSessionResponse>(
+      `${this.apiUrl}/Payments/CreateCheckoutSession`,
+      request,
       { headers: this.getHeaders() }
+    ).pipe(
+      catchError(this.handleError)
     );
   }
 
-  // معالجة Stripe Webhook (للاستخدام الداخلي فقط)
-  handleStripeWebhook(event: WebhookEvent): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Payments/StripeWebhook`, 
-      event, 
-      { headers: this.getHeaders() }
-    );
-  }
-
-  // التحقق من حالة الدفع
   checkPaymentStatus(orderId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/Orders/${orderId}`, {
       headers: this.getHeaders()
-    });
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('PaymentService Error:', error);
+    
+    let errorMessage = 'An error occurred';
+    
+    if (error.status === 401) {
+      errorMessage = 'Authentication required. Please login again.';
+    } else if (error.status === 403) {
+      errorMessage = 'Access forbidden.';
+    } else if (error.status === 404) {
+      errorMessage = 'Payment service not found.';
+    } else if (error.status === 500) {
+      errorMessage = 'Server error. Please try again later.';
+    } else if (error.error?.message) {
+      errorMessage = error.error.message;
+    }
+    
+    return throwError(() => new Error(errorMessage));
   }
 }
