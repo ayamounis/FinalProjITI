@@ -18,7 +18,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
   messages: ChatMessage[] = [];
   newMessage: string = '';
   isTyping: boolean = false;
- isMinimized: boolean = false;
+  isMinimized: boolean = true;
+  unreadCount: number = 0;
+  hasNewMessage: boolean = false;
 
   private destroy$ = new Subject<void>();
   private shouldScrollToBottom = true;
@@ -29,13 +31,31 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     this.chatbotService.messages$
       .pipe(takeUntil(this.destroy$))
       .subscribe(messages => {
+        const previousCount = this.messages.length;
         this.messages = messages;
+        
+        // إذا كان الشات مصغر وجاءت رسالة جديدة
+        if (this.isMinimized && messages.length > previousCount) {
+          const newMessages = messages.slice(previousCount);
+          const hasNewBotMessage = newMessages.some(msg => msg.sender === 'bot');
+          
+          if (hasNewBotMessage) {
+            this.unreadCount++;
+            this.hasNewMessage = true;
+            
+            // إزالة الـ pulse effect بعد 3 ثواني
+            setTimeout(() => {
+              this.hasNewMessage = false;
+            }, 3000);
+          }
+        }
+        
         this.shouldScrollToBottom = true;
       });
   }
 
   ngAfterViewChecked(): void {
-    if (this.shouldScrollToBottom) {
+    if (this.shouldScrollToBottom && !this.isMinimized) {
       this.scrollToBottom();
       this.shouldScrollToBottom = false;
     }
@@ -88,11 +108,21 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
   toggleMinimize(): void {
     this.isMinimized = !this.isMinimized;
     
-    // إذا فتح الشات، scroll للأسفل
+    // إذا فتح الشات، إعادة تعيين العدادات
     if (!this.isMinimized) {
+      this.unreadCount = 0;
+      this.hasNewMessage = false;
+      
       setTimeout(() => {
         this.scrollToBottom();
       }, 100);
+    }
+  }
+
+  // للتحكم في الدائرة المصغرة
+  onMinimizedClick(): void {
+    if (this.isMinimized) {
+      this.toggleMinimize();
     }
   }
 
@@ -100,6 +130,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     if (confirm('Are you sure you want to clear the chat history?')) {
       this.chatbotService.clearChat();
       this.shouldScrollToBottom = true;
+      this.unreadCount = 0;
+      this.hasNewMessage = false;
     }
   }
 
@@ -120,7 +152,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
       this.sendMessage();
     }
     
-    // إضافة دعم للـ Escape لإغلاق النوافذ المفتوحة
     if (event.key === 'Escape') {
       // يمكن استخدامها لاحقاً لإغلاق modals أو menus
     }
@@ -139,7 +170,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     return message.id;
   }
 
-  // إضافة method للتحقق من نوع الرسالة
   isUserMessage(message: ChatMessage): boolean {
     return message.sender === 'user';
   }
@@ -148,12 +178,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     return message.sender === 'bot';
   }
 
-  // method لإنشاء ID فريد
   private generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
-  // إضافة method للتعامل مع الرسائل الطويلة
   shouldTruncateMessage(content: string): boolean {
     return content.length > 500;
   }
@@ -163,14 +191,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     return content.substring(0, length) + '...';
   }
 
-  // method لإعادة إرسال الرسالة في حالة الفشل
   retryMessage(message: ChatMessage): void {
     if (message.sender === 'user' && !this.isTyping) {
       this.sendMessage();
     }
   }
 
-  // إضافة دعم للـ drag and drop للصور (للمستقبل)
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
@@ -182,12 +208,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
-      // معالجة الملفات المرفوعة - يمكن تطويرها لاحقاً
       console.log('Files dropped:', files);
     }
   }
 
-  // method لحفظ المحادثة (للمستقبل)
   saveConversation(): void {
     const conversation = {
       messages: this.messages,
@@ -195,11 +219,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
       sessionId: this.generateId()
     };
     
-    // يمكن حفظها في localStorage أو إرسالها للسيرفر
     console.log('Saving conversation:', conversation);
   }
 
-  // method للبحث في المحادثة
   searchInConversation(query: string): ChatMessage[] {
     if (!query.trim()) return [];
     
@@ -208,7 +230,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     );
   }
 
-  // method لتصدير المحادثة كـ text
   exportConversation(): string {
     let exportText = `CustomCraft Chat Conversation - ${new Date().toLocaleDateString()}\n\n`;
     
@@ -221,7 +242,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     return exportText;
   }
 
-  // method لتحميل المحادثة كملف
   downloadConversation(): void {
     const content = this.exportConversation();
     const blob = new Blob([content], { type: 'text/plain' });
