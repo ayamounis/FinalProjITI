@@ -14,7 +14,9 @@ export const routes: Routes = [
     { path: "register", component: RegisterComponent, title: "Register Page" },
     //    { path: 'auth', component: LoginRegisterComponent, title: "Login/Register Page" },
        {path:'products', loadComponent: () => import('./products/products.component').then(m => m.ProductsComponent)},
-       {path:'cart',canActivate: [authGuard],loadComponent: () => import('./cart/cart.component').then(m => m.CartComponent)},
+       
+      {path:'chat',loadComponent: () => import('./chat-window/chat-window.component').then(m =>m.ChatWindowComponent)},
+      {path:'cart',canActivate: [authGuard],loadComponent: () => import('./cart/cart.component').then(m => m.CartComponent)},
       {path:'checkout',canActivate: [authGuard],loadComponent: () => import('./checkout/checkout.component').then(m => m.CheckoutComponent)},
       {path:'paymentsuccess',canActivate: [authGuard],loadComponent: () => import('./payment-success/payment-success.component').then(m =>m.PaymentSuccessComponent)},
       { path: "home" ,component: HomeComponent, title: "Home Page" },
