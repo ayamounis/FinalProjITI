@@ -71,17 +71,25 @@
     <p>Loading products...</p>
   </div>
   
-  <!-- Products Grid -->
+  <!-- Products Section -->
   <div class="products-section" [hidden]="isLoadingProducts">
     <div class="products-header">
       <h2>Products</h2>
-      <span class="products-count">
-        {{filteredProducts.length}} products
-      </span>
+      <div class="products-info">
+        <span class="products-count">
+          {{totalItems}} products found
+        </span>
+        @if (totalItems > 0) {
+          <span class="page-info">
+            Page {{currentPage}} of {{totalPages}}
+          </span>
+        }
+      </div>
     </div>
     
-    <div class="products-grid" [hidden]="filteredProducts.length === 0">
-      @for (product of filteredProducts; track product.productTemplateId) {
+    <!-- Products Grid -->
+    <div class="products-grid" [hidden]="paginatedProducts.length === 0">
+      @for (product of paginatedProducts; track product.productTemplateId) {
         <div class="product-card">
           <div class="product-image">
             <img [src]="product.imageUrl" [alt]="product.name" />
@@ -124,6 +132,84 @@
         </div>
       }
     </div>
+    
+    <!-- Pagination -->
+    @if (totalPages > 1) {
+      <div class="pagination-container">
+        <div class="pagination">
+          <!-- First Page Button -->
+          <button 
+            class="pagination-btn"
+            [class.disabled]="currentPage === 1"
+            (click)="goToFirstPage()"
+            [disabled]="currentPage === 1"
+            title="First Page"
+          >
+            ««
+          </button>
+          
+          <!-- Previous Page Button -->
+          <button 
+            class="pagination-btn"
+            [class.disabled]="currentPage === 1"
+            (click)="goToPreviousPage()"
+            [disabled]="currentPage === 1"
+            title="Previous Page"
+          >
+            «
+          </button>
+          
+          <!-- Page Numbers -->
+          @for (page of getPageNumbers(); track page) {
+            <button 
+              class="pagination-btn"
+              [class.active]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{page}}
+            </button>
+          }
+          
+          <!-- Next Page Button -->
+          <button 
+            class="pagination-btn"
+            [class.disabled]="currentPage === totalPages"
+            (click)="goToNextPage()"
+            [disabled]="currentPage === totalPages"
+            title="Next Page"
+          >
+            »
+          </button>
+          
+          <!-- Last Page Button -->
+          <button 
+            class="pagination-btn"
+            [class.disabled]="currentPage === totalPages"
+            (click)="goToLastPage()"
+            [disabled]="currentPage === totalPages"
+            title="Last Page"
+          >
+            »»
+          </button>
+        </div>
+        
+        <!-- Page Size Selector - محدث ليعكس التغيير -->
+        <div class="page-size-selector">
+          <label for="pageSize">Items per page:</label>
+          <select 
+            id="pageSize"
+            [(ngModel)]="itemsPerPage"
+            (change)="currentPage = 1; applyFilters()"
+            class="page-size-select"
+          >
+            <option [ngValue]="4">4</option>
+            <option [ngValue]="8">8</option>
+            <option [ngValue]="12">12</option>
+            <option [ngValue]="24">24</option>
+          </select>
+        </div>
+      </div>
+    }
     
     <!-- No Products Message -->
     <div class="no-products" [hidden]="filteredProducts.length > 0">

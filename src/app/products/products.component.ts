@@ -10,7 +10,6 @@ import { CartService, AddToCartRequest } from '../cart.service';
 import { CustomProductService, CreateCustomProductRequest } from '../custom-product.service';
 import { CategoryService } from '../category.service';
 
-
 @Component({
   selector: 'app-products',
   standalone: true,
@@ -21,11 +20,18 @@ import { CategoryService } from '../category.service';
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  paginatedProducts: Product[] = []; // المنتجات المعروضة في الصفحة الحالية
 
   selectedCategory: number = 0;
   minPrice: number = 0;
   maxPrice: number = 1000;
   searchTerm: string = '';
+
+  // Pagination properties - تم تغيير itemsPerPage من 6 إلى 4
+  currentPage: number = 1;
+  itemsPerPage: number = 4; // عدد المنتجات في كل صفحة (تم تغييره من 6 إلى 4)
+  totalPages: number = 0;
+  totalItems: number = 0;
 
   isLoadingProducts: boolean = false;
   addingToCart: { [key: number]: boolean } = {};
@@ -51,9 +57,13 @@ export class ProductsComponent implements OnInit {
 
       this.route.queryParams.subscribe(params => {
         const categoryFromUrl = +params['category'];
+        const pageFromUrl = +params['page'] || 1;
+        
         if (categoryFromUrl) {
           this.selectedCategory = categoryFromUrl;
         }
+        this.currentPage = pageFromUrl;
+        
         this.loadProducts();
       });
     }
@@ -66,7 +76,7 @@ export class ProductsComponent implements OnInit {
     this.productService.getAllProducts().subscribe({
       next: (data) => {
         this.products = data;
-        this.applyFilters(); // ✅ هنا فلترة بعد الـ API
+        this.applyFilters();
         this.isLoadingProducts = false;
       },
       error: (error) => {
@@ -88,17 +98,121 @@ export class ProductsComponent implements OnInit {
 
       return categoryMatch && priceMatch && searchMatch && activeMatch;
     });
+
+    // بعد الفلترة، حدث الـ pagination
+    this.totalItems = this.filteredProducts.length;
+    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+    
+    // تأكد إن الصفحة الحالية مش أكبر من العدد الكلي للصفحات
+    if (this.currentPage > this.totalPages && this.totalPages > 0) {
+      this.currentPage = 1;
+    }
+    
+    this.updatePaginatedProducts();
+    this.updateUrl();
   }
 
+  updatePaginatedProducts(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedProducts = this.filteredProducts.slice(startIndex, endIndex);
+  }
+
+  updateUrl(): void {
+    const queryParams: any = {};
+    
+    if (this.selectedCategory !== 0) {
+      queryParams.category = this.selectedCategory;
+    }
+    
+    if (this.currentPage !== 1) {
+      queryParams.page = this.currentPage;
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: queryParams,
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+  }
+
+  // Pagination methods
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.updatePaginatedProducts();
+      this.updateUrl();
+      this.scrollToTop();
+    }
+  }
+
+  goToFirstPage(): void {
+    this.goToPage(1);
+  }
+
+  goToLastPage(): void {
+    this.goToPage(this.totalPages);
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.goToPage(this.currentPage + 1);
+    }
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    if (this.totalPages <= maxVisiblePages) {
+      // إذا كان العدد الكلي للصفحات أقل من أو يساوي الحد الأقصى المرئي
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // إذا كان العدد أكبر، اعرض نطاق حول الصفحة الحالية
+      let startPage = Math.max(1, this.currentPage - 2);
+      let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+      
+      // تأكد من عرض العدد الصحيح من الصفحات
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
+  }
+
+  scrollToTop(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // Filter methods - محدثة عشان تعيد تعيين الصفحة للأولى
   onCategoryChange(): void {
+    this.currentPage = 1;
     this.applyFilters();
   }
 
   onPriceChange(): void {
+    this.currentPage = 1;
     this.applyFilters();
   }
 
   onSearchChange(): void {
+    this.currentPage = 1;
     this.applyFilters();
   }
 
@@ -107,9 +221,11 @@ export class ProductsComponent implements OnInit {
     this.minPrice = 0;
     this.maxPrice = 1000;
     this.searchTerm = '';
-    this.filteredProducts = [...this.products];
+    this.currentPage = 1;
+    this.applyFilters();
   }
 
+  // باقي الدوال زي ما هي
   getCategoryName(categoryId: number): string {
     const category = this.categories.find(cat => cat.id === categoryId);
     return category ? category.name : 'Unknown';
