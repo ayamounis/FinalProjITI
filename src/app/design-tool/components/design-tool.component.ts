@@ -6,11 +6,15 @@ import {
   inject,
   signal,
   HostListener,
+  Inject,
+  PLATFORM_ID,
+  OnInit,
 } from '@angular/core';
-import { NgIf, NgFor, NgOptimizedImage } from '@angular/common';
+import { NgIf, NgFor, NgOptimizedImage, isPlatformBrowser, CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 
-import { fabric } from 'fabric';
+// import { fabric } from 'fabric'; // Removed static import to prevent SSR errors
+declare const fabric: any; // Declared to provide type info to TypeScript without importing the module
 
 // Core services
 import { DesignProductService } from '../services/design-product.service';
@@ -29,12 +33,12 @@ import { EnhancedProductTemplate, CanvasState } from '../models/design.model';
 @Component({
   selector: 'app-design-tool',
   standalone: true,
-  imports: [NgIf, NgFor, NgOptimizedImage],
+  imports: [NgIf, NgFor, NgOptimizedImage, CommonModule], // Added CommonModule
   templateUrl: './design-tool.component.html',
   styleUrls: ['./design-tool.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DesignToolComponent implements AfterViewInit {
+export class DesignToolComponent implements AfterViewInit, OnInit {
   // Service Injections
   private productService = inject(DesignProductService);
   private auth = inject(DesignAuthService);
@@ -44,7 +48,7 @@ export class DesignToolComponent implements AfterViewInit {
   // Core Design State
   templates = signal<ProductsTemplatesResponse[]>([]);
   selectedTemplate = signal<EnhancedProductTemplate | null>(null);
-  canvas = signal<fabric.Canvas | null>(null);
+  canvas = signal<any | null>(null); // Changed to 'any' to accommodate dynamic import
 
   // UI/UX State
   isLoading = signal(true);
@@ -61,7 +65,7 @@ export class DesignToolComponent implements AfterViewInit {
   canRedo = this.historyService.canRedo;
 
   // Internal State Properties
-  private backgroundObjects: fabric.Image[] = [];
+  private backgroundObjects: any[] = []; // Changed to 'any'
   private pendingTemplate: ProductsTemplatesResponse | null = null;
 
   // Static Data for UI
@@ -112,10 +116,10 @@ export class DesignToolComponent implements AfterViewInit {
     { name: 'Pizza', url: 'https://img.icons8.com/?size=100&id=RTFOTVPzEAwT&format=png&color=000000' },
     { name: 'Watermelon', url: 'https://img.icons8.com/?size=100&id=Iclk9gpgVzi5&format=png&color=000000' },
     { name: 'Watermelon 2', url: 'https://img.icons8.com/?size=100&id=gIzaNVp2U2Fd&format=png&color=000000' },
-    {name: 'Plestine', url: 'https://img.icons8.com/?size=100&id=8Op1Hgv1SttF&format=png&color=000000'}
+    { name: 'Plestine', url: 'https://img.icons8.com/?size=100&id=8Op1Hgv1SttF&format=png&color=000000'}
   ];
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.productService.getTemplates().subscribe({
       next: (res) => {
         this.templates.set(res ?? []);
@@ -125,17 +129,33 @@ export class DesignToolComponent implements AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
-    // Dispose of any existing canvas instance to prevent memory leaks on re-initialization.
-    if (this.canvas()) {
-      this.canvas()?.dispose();
-      this.canvas.set(null);
+  ngOnInit(): void {
+    // This lifecycle hook is available for logic that runs before the view is initialized.
+    // The main SSR fix logic is in ngAfterViewInit to ensure the canvas DOM element is available.
+  }
+
+  async ngAfterViewInit() {
+    // We check if the code is running on the browser before executing any canvas logic.
+    if (isPlatformBrowser(this.platformId)) {
+      try {
+        // Dynamically import Fabric.js. This loads the script only on the client-side
+        // and attaches the `fabric` object to the global scope (window.fabric).
+        await import('fabric');
+
+        // Dispose of any existing canvas instance to prevent memory leaks on re-initialization.
+        if (this.canvas()) {
+          this.canvas()?.dispose();
+          this.canvas.set(null);
+        }
+        const canvasInstance = new fabric.Canvas('design-canvas', {
+          width: 500,
+          height: 600,
+        });
+        this.canvas.set(canvasInstance);
+      } catch (error) {
+        console.error('Failed to load or initialize Fabric.js:', error);
+      }
     }
-    const canvasInstance = new fabric.Canvas('design-canvas', {
-      width: 500,
-      height: 600,
-    });
-    this.canvas.set(canvasInstance);
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -186,7 +206,7 @@ export class DesignToolComponent implements AfterViewInit {
 
       fabric.Image.fromURL(
         pngUrl,
-        (img) => {
+        (img: any) => {
           canvasInstance.setBackgroundImage(
             img,
             canvasInstance.renderAll.bind(canvasInstance),
@@ -296,7 +316,7 @@ export class DesignToolComponent implements AfterViewInit {
     const obj = this.canvas()?.getActiveObject();
 
     if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
-      (obj as fabric.Textbox).set('fontFamily', font);
+      (obj as any).set('fontFamily', font);
       this.canvas()?.renderAll();
     }
   }
@@ -307,7 +327,7 @@ export class DesignToolComponent implements AfterViewInit {
     const obj = this.canvas()?.getActiveObject();
 
     if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
-      (obj as fabric.Textbox).set('fontSize', size);
+      (obj as any).set('fontSize', size);
       this.canvas()?.renderAll();
     }
   }
@@ -317,7 +337,7 @@ export class DesignToolComponent implements AfterViewInit {
     const obj = this.canvas()?.getActiveObject();
 
     if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
-      const text = obj as fabric.Textbox;
+      const text = obj as any;
       const current = text.get('fontWeight');
       text.set('fontWeight', current === 'bold' ? 'normal' : 'bold');
       this.canvas()?.renderAll();
@@ -329,7 +349,7 @@ export class DesignToolComponent implements AfterViewInit {
     const obj = this.canvas()?.getActiveObject();
 
     if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
-      const text = obj as fabric.Textbox;
+      const text = obj as any;
       const current = text.get('fontStyle');
       text.set('fontStyle', current === 'italic' ? 'normal' : 'italic');
       this.canvas()?.renderAll();
@@ -409,10 +429,10 @@ export class DesignToolComponent implements AfterViewInit {
 
     fabric.Image.fromURL(
       backgroundUrl,
-      (img) => {
+      (img: any) => {
         if (!img) return;
         printAreas.forEach((area, index) => {
-          img.clone((clonedImg: fabric.Image) => {
+          img.clone((clonedImg: any) => {
             const scale = Math.max(area.width / clonedImg.width!, area.height / clonedImg.height!);
             const offsetX = (clonedImg.width! * scale - area.width) / 2;
             const offsetY = (clonedImg.height! * scale - area.height) / 2;
@@ -470,7 +490,7 @@ export class DesignToolComponent implements AfterViewInit {
 
     fabric.Image.fromURL(
       stickerUrl,
-      (img) => {
+      (img: any) => {
         if (!img) return;
         const maxSize = 100;
         const scale = Math.min(maxSize / img.width!, maxSize / img.height!);
@@ -518,7 +538,7 @@ export class DesignToolComponent implements AfterViewInit {
     reader.onload = () => {
       fabric.Image.fromURL(
         reader.result as string,
-        (img) => {
+        (img: any) => {
           if (!img) return;
           const canvas = this.canvas()!;
           const maxWidth = canvas.getWidth() / 3; 
@@ -755,7 +775,7 @@ export class DesignToolComponent implements AfterViewInit {
 
     const canvasState: CanvasState = {
       version: Date.now().toString(),
-      objects: canvas.getObjects().map((obj) => obj.toObject(['id', 'selectable', 'evented'])),
+      objects: canvas.getObjects().map((obj: any) => obj.toObject(['id', 'selectable', 'evented'])),
       background: canvas.backgroundColor as string,
       backgroundImage: backgroundImageData,
       width: canvas.getWidth(),
@@ -815,11 +835,11 @@ export class DesignToolComponent implements AfterViewInit {
   }
 
   // Converts the current canvas view to a Blob for uploading.
-  private async convertCanvasToBlob(canvas: fabric.Canvas): Promise<Blob> {
+  private async convertCanvasToBlob(canvas: any): Promise<Blob> {
     return new Promise<Blob>((resolve, reject) => {
       try {
-        const printAreaObjects: fabric.Object[] = [];
-        canvas.getObjects().forEach(obj => {
+        const printAreaObjects: any[] = [];
+        canvas.getObjects().forEach((obj: any) => {
           if ((obj as any).isPrintArea) {
             printAreaObjects.push(obj);
             obj.set('visible', false);

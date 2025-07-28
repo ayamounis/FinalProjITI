@@ -16,12 +16,13 @@ export const routes: Routes = [
   
   // Lazy loaded routes
   { path: 'products', loadComponent: () => import('./products/products.component').then(m => m.ProductsComponent) },
+  { path: 'chat', loadComponent: () => import('./chat-window/chat-window.component').then(m => m.ChatWindowComponent) },
   { path: 'cart', canActivate: [authGuard], loadComponent: () => import('./cart/cart.component').then(m => m.CartComponent) },
   { path: 'checkout', canActivate: [authGuard], loadComponent: () => import('./checkout/checkout.component').then(m => m.CheckoutComponent) },
   { path: 'paymentsuccess', canActivate: [authGuard], loadComponent: () => import('./payment-success/payment-success.component').then(m => m.PaymentSuccessComponent) },
   { path: 'profile', loadComponent: () => import('./seller-profile/seller-profile.component').then(m => m.SellerProfileComponent) },
   
-  //  design tool route 
+  // Design tool route 
   { path: 'design', loadComponent: () => import('./design-tool/components/design-tool.component').then(m => m.DesignToolComponent) },
   
   { path: "**", redirectTo: 'home', pathMatch: 'full' }
