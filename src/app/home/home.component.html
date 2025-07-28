@@ -1,103 +1,200 @@
-<!-- Hero Section with Slider -->
-<section id="heroCarousel" class="position-relative container carousel slide p-4" data-bs-ride="carousel" data-bs-interval="2000">
+<!-- Hero Section with Enhanced Slider -->
+<section id="heroCarousel" class="hero-carousel position-relative carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
   <!-- Indicators -->
-  <div class="carousel-indicators">
+  <div class="carousel-indicators custom-indicators">
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
   </div>
 
   <!-- Slides -->
-  <div class="carousel-inner">
+  <div class="carousel-inner rounded-4 overflow-hidden shadow-lg">
     <div class="carousel-item active">
-      <img src="img/wOU.jpg" class="d-block w-100" alt="Slide 1">
+      <div class="hero-slide">
+        <img src="img/wOU.jpg" class="d-block w-100 hero-image" alt="Professional Print Services">
+        <div class="hero-overlay"></div>
+      </div>
     </div>
     <div class="carousel-item">
-      <img src="img/unnamed (5).png" class="d-block w-100" alt="Slide 2">
+      <div class="hero-slide">
+        <img src="img/unnamed (5).png" class="d-block w-100 hero-image" alt="Custom Design Solutions">
+        <div class="hero-overlay"></div>
+      </div>
     </div>
     <div class="carousel-item">
-      <img src="img/WhatsApp Image 2025-07-15 at 06.53.25_20d789cc.jpg" class="d-block w-100" alt="Slide 3">
+      <div class="hero-slide">
+        <img src="img/WhatsApp Image 2025-07-15 at 06.53.25_20d789cc.jpg" class="d-block w-100 hero-image" alt="Quality Printing">
+        <div class="hero-overlay"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Shared Button -->
-  <div class="position-absolute top-50 start-50 translate-middle z-3" style="transform: translate(-50%, 300%) !important;">
-    <button class="btn btn-secondary btn-lg" routerLink="/products">Design Your Print Now</button>
+  <!-- Hero Content -->
+  <div class="hero-content position-absolute top-50 start-50 translate-middle text-center text-white">
+    <h1 class="hero-title display-3 fw-bold mb-4">Create Your Perfect Print</h1>
+    <p class="hero-subtitle lead mb-5">Transform your ideas into stunning custom products with our professional printing services</p>
+    <button class="btn btn-hero btn-lg px-5 py-3 rounded-pill shadow-lg" routerLink="/products">
+      <i class="fas fa-palette me-2"></i>
+      Design Your Print Now
+    </button>
   </div>
 
   <!-- Controls -->
-  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
+  <button class="carousel-control-prev custom-control" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon custom-arrow"></span>
     <span class="visually-hidden">Previous</span>
   </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
+  <button class="carousel-control-next custom-control" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon custom-arrow"></span>
     <span class="visually-hidden">Next</span>
   </button>
 </section>
 
-
-
 <!-- About Us Section -->
-<section class="about-us text-center py-5">
-  <h2 class="fw-bold mb-4">Who We Are</h2>
-  <p class="lead mx-auto w-75">
-    We are a leading print-on-demand company dedicated to providing high-quality custom printed products.
-    Our mission is to help you express your creativity through our wide range of customizable items.
-  </p>
-  <div class="d-flex justify-content-center gap-5 my-4">
-    <div class="icon text-center">
-      <img src="assets/quality.svg" alt="Quality Prints" width="50">
-      <p>Quality Prints</p>
+<section class="about-section py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h2 class="section-title display-4 fw-bold mb-4">Who We Are</h2>
+        <p class="section-subtitle lead mb-5">
+          We are a leading print-on-demand company dedicated to providing high-quality custom printed products.
+          Our mission is to help you express your creativity through our wide range of customizable items.
+        </p>
+      </div>
     </div>
-    <div class="icon text-center">
-      <img src="assets/delivery.svg" alt="Fast Delivery" width="50">
-      <p>Fast Delivery</p>
-    </div>
-    <div class="icon text-center">
-      <img src="assets/custom.svg" alt="Customizable Products" width="50">
-      <p>Customizable Products</p>
+    
+    <div class="row justify-content-center g-4">
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-award fa-3x"></i>
+          </div>
+          <h4 class="feature-title fw-bold mb-3">Quality Prints</h4>
+          <p class="feature-description">Premium materials and cutting-edge printing technology for exceptional results</p>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-shipping-fast fa-3x"></i>
+          </div>
+          <h4 class="feature-title fw-bold mb-3">Fast Delivery</h4>
+          <p class="feature-description">Quick turnaround times without compromising on quality or attention to detail</p>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="feature-icon mb-3">
+            <i class="fas fa-paint-brush fa-3x"></i>
+          </div>
+          <h4 class="feature-title fw-bold mb-3">Customizable Products</h4>
+          <p class="feature-description">Endless possibilities to bring your unique vision to life with our design tools</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- Promotional Video Section -->
-<section class="promotional-video text-center py-5 bg-light">
-  <h2 class="fw-bold mb-4">Watch How It Works</h2>
-  <div class="ratio ratio-16x9 w-75 mx-auto">
-    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-            title="YouTube video"
-            allowfullscreen>
-    </iframe>
+<section class="video-section py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h2 class="section-title display-4 fw-bold mb-4">Watch How It Works</h2>
+        <p class="section-subtitle lead mb-5">Discover the simple process behind creating your custom prints</p>
+      </div>
+    </div>
+    
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="video-container position-relative rounded-4 overflow-hidden shadow-lg">
+          <div class="ratio ratio-16x9">
+            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    title="How It Works - Custom Printing Process"
+                    allowfullscreen
+                    class="rounded-4">
+            </iframe>
+          </div>
+          <div class="video-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+            <button class="play-button btn btn-link text-white p-0" style="display: none;">
+              <i class="fas fa-play-circle fa-5x"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- Categories Section -->
-<section class="categories py-5 text-center">
-  <h2 class="fw-bold mb-4">Categories</h2>
-  <div class="d-flex flex-wrap justify-content-center gap-4">
-    @for (category of categories; track category.id) {
-      <a class="category-card shadow-sm p-3 rounded-4 text-decoration-none text-dark"
-         [routerLink]="['/products']"
-         [queryParams]="{ category: category.id }"
-         style="width: 220px;">
-        <img [src]="category.image" [alt]="category.name" class="img-fluid rounded-3 mb-2" />
-        <h4 class="fw-bold">{{ category.name }}</h4>
-        <p class="small text-muted">{{ category.description }}</p>
-      </a>
-    }
+<section class="categories-section py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h2 class="section-title display-4 fw-bold mb-4">Our Categories</h2>
+        <p class="section-subtitle lead mb-5">Explore our diverse range of customizable products</p>
+      </div>
+    </div>
+    
+    <div class="row g-4 justify-content-center">
+      @for (category of categories; track category.id) {
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <a class="category-card d-block text-decoration-none h-100"
+             [routerLink]="['/products']"
+             [queryParams]="{ category: category.id }">
+            <div class="card border-0 shadow-sm h-100 category-item">
+              <div class="category-image-container position-relative overflow-hidden">
+                <img [src]="category.image" 
+                     [alt]="category.name" 
+                     class="card-img-top category-image" />
+                <div class="category-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+              </div>
+              <div class="card-body text-center p-4">
+                <h4 class="card-title fw-bold mb-2">{{ category.name }}</h4>
+                <p class="card-text text-muted small mb-3">{{ category.description }}</p>
+                <div class="category-arrow">
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      }
+    </div>
   </div>
 </section>
 
 <!-- How It Works Section -->
-<section class="how-it-works py-5 text-center bg-light">
-  <h2 class="fw-bold mb-4">How It Works</h2>
-  <div class="d-flex flex-wrap justify-content-center gap-5">
-    @for (step of steps; track step.title) {
-      <div class="step-card">
-        <h4 class="fw-bold">{{ step.title }}</h4>
-        <p>{{ step.description }}</p>
+<section class="process-section py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h2 class="section-title display-4 fw-bold mb-4">How It Works</h2>
+        <p class="section-subtitle lead mb-5">Three simple steps to get your custom prints</p>
       </div>
-    }
+    </div>
+    
+    <div class="row g-4 justify-content-center">
+      @for (step of steps; track step.title; let i = $index) {
+        <div class="col-lg-4 col-md-6">
+          <div class="process-card text-center p-4 h-100">
+            <div class="process-number mb-4">
+              <span class="step-number fw-bold">{{ i + 1 }}</span>
+            </div>
+            <div class="process-icon mb-4">
+              @if (i === 0) {
+                <i class="fas fa-shopping-cart fa-3x"></i>
+              } @else if (i === 1) {
+                <i class="fas fa-palette fa-3x"></i>
+              } @else {
+                <i class="fas fa-check-circle fa-3x"></i>
+              }
+            </div>
+            <h4 class="process-title fw-bold mb-3">{{ step.title }}</h4>
+            <p class="process-description">{{ step.description }}</p>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </section>
