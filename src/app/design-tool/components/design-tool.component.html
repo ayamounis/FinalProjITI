@@ -1,0 +1,477 @@
+<div class="design-container">
+  <div class="container-fluid">
+    <!-- Header Section -->
+    <div class="header-section text-center py-4 mb-4">
+      <h1 class="display-4 fw-bold text-white mb-2">🎨 Design Studio</h1>
+      <p class="lead text-white-50 mb-0">
+        Create stunning designs with our professional design tool !
+      </p>
+    </div>
+
+    <!-- Loading state -->
+    @if (isLoading()) {
+    <div class="loading-section text-center py-5">
+      <div
+        class="spinner-border text-white-50 mb-3"
+        role="status"
+        style="width: 3rem; height: 3rem"
+      >
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="fs-5 text-light">Loading templates...</p>
+    </div>
+    }
+
+    <!-- Template selector -->
+    @else {
+    <div class="template-section mb-4">
+      <div class="container">
+        <h2 class="text-center text-white-50 mb-4">✨ Choose Your Template</h2>
+        <div
+          class="template-grid d-flex flex-wrap justify-content-center gap-3"
+        >
+          @for (template of templates(); track template.productTemplateId) {
+          <div
+            class="template-card card border-0 shadow-sm"
+            (click)="loadTemplate(template)"
+            [class.border-primary]="
+              selectedTemplate()?.productTemplateId ===
+              template.productTemplateId
+            "
+            [class.shadow-lg]="
+              selectedTemplate()?.productTemplateId ===
+              template.productTemplateId
+            "
+            style="width: 180px; cursor: pointer"
+          >
+            <img
+              [src]="template.imageUrl ?? ''"
+              class="card-img-top"
+              alt="Template preview"
+              style="height: 160px; object-fit: cover"
+            />
+            <div class="card-body p-2 text-center">
+              <p class="card-text small fw-medium mb-0">{{ template.name }}</p>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Design area -->
+    @if (selectedTemplate() !== null) {
+    <div class="design-workspace">
+      <div class="container-fluid">
+        <!-- Quick Actions Bar (Above Canvas) -->
+        <div
+          class="quick-actions-bar bg-light border rounded-3 p-3 mb-4 shadow-sm"
+        >
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="d-flex gap-2 flex-wrap">
+                <button
+                  (click)="clearCanvas()"
+                  class="btn btn-warning btn-sm fw-semibold"
+                >
+                  <i class="fas fa-broom me-1"></i>Clear All
+                </button>
+                <button
+                  (click)="undo()"
+                  [disabled]="!canUndo()"
+                  class="btn btn-outline-secondary btn-sm"
+                >
+                  <i class="fas fa-undo me-1"></i>Undo
+                </button>
+                <button
+                  (click)="redo()"
+                  [disabled]="!canRedo()"
+                  class="btn btn-outline-secondary btn-sm"
+                >
+                  <i class="fas fa-redo me-1"></i>Redo
+                </button>
+                <button
+                  (click)="deleteActiveObject()"
+                  class="btn btn-danger btn-sm"
+                >
+                  <i class="fas fa-trash me-1"></i>Delete
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6 text-md-end">
+              <small style="font-size: 1.1rem; color: #dd322f" class="fw-bold"
+                >Keep your design inside the printable area</small
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Clear Confirmation Modal -->
+        @if (showClearConfirm()) {
+        <div
+          class="alert alert-warning alert-dismissible fade show mb-4"
+          role="alert"
+        >
+          <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span class="me-3">Are you sure you want to clear everything?</span>
+            <div class="ms-auto">
+              <button
+                (click)="confirmClearCanvas()"
+                class="btn btn-danger btn-sm me-2"
+              >
+                Yes, Clear
+              </button>
+              <button
+                (click)="cancelClearCanvas()"
+                class="btn btn-secondary btn-sm"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+
+        <div class="row g-4">
+          <!-- Left Sidebar: Design Tools -->
+          <div class="col-lg-3">
+            <div class="design-tools bg-white rounded-3 shadow-sm h-100">
+              <!-- Text Tools -->
+              <div class="tool-section border-bottom">
+                <div class="tool-header p-3 bg-light">
+                  <h5 class="mb-0 fw-semibold">📝 Text Tools</h5>
+                </div>
+                <div class="tool-content p-3">
+                  <button
+                    class="btn btn-success w-100 mb-3"
+                    (click)="addText()"
+                  >
+                    <i class="fas fa-plus me-2"></i>Add Text
+                  </button>
+
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold"
+                      >Font Family</label
+                    >
+                    <select
+                      #fontSelect
+                      (change)="changeFontFamily(fontSelect)"
+                      class="form-select form-select-sm"
+                    >
+                      <!-- Standard Fonts -->
+                      <option value="Arial">Arial</option>
+                      <option value="Courier New">Courier New</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Times New Roman">Times New Roman</option>
+                      <option value="Trebuchet MS">Trebuchet MS</option>
+                      <option value="Helvetica">Helvetica</option>
+                      <option value="Verdana">Verdana</option>
+
+                      <!-- Cursive / Handwritten / Stylish Fonts -->
+                      <option value="Segoe Script">Segoe Script</option>
+                      <option value="Lucida Handwriting">
+                        Lucida Handwriting
+                      </option>
+                      <option value="Brush Script MT">Brush Script MT</option>
+                      <option value="Apple Chancery">Apple Chancery</option>
+                      <option value="Snell Roundhand">Snell Roundhand</option>
+                      <option value="Bradley Hand">Bradley Hand</option>
+                      <option value="Kristen ITC">Kristen ITC</option>
+                      <option value="Comic Sans MS">Comic Sans MS</option>
+                      <option value="Chalkboard SE">Chalkboard SE</option>
+                      <option value="Noteworthy">Noteworthy</option>
+                      <option value="Segoe Print">Segoe Print</option>
+                      <option value="MV Boli">MV Boli</option>
+                      <option value="Gabriola">Gabriola</option>
+                      <option value="Papyrus">Papyrus</option>
+                      <option value="Lucida Calligraphy">
+                        Lucida Calligraphy
+                      </option>
+                      <option value="Palace Script MT">Palace Script MT</option>
+                      <option value="cursive">[Default] Cursive</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold"
+                      >Font Size</label
+                    >
+                    <select
+                      #fontSizeSelect
+                      (change)="changeFontSize(fontSizeSelect)"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="14">14px</option>
+                      <option value="18">18px</option>
+                      <option value="24">24px</option>
+                      <option value="32">32px</option>
+                      <option value="48">48px</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold"
+                      >Color Picker</label
+                    >
+                    <input
+                      type="color"
+                      (change)="changeTextColor($event)"
+                      class="form-control form-control-color w-100"
+                    />
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <button
+                      class="btn btn-outline-secondary flex-fill"
+                      (click)="toggleBold()"
+                    >
+                      <strong>B</strong>
+                    </button>
+                    <button
+                      class="btn btn-outline-secondary flex-fill"
+                      (click)="toggleItalic()"
+                    >
+                      <em>I</em>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Shapes -->
+              <div class="tool-section border-bottom">
+                <div class="tool-header p-3 bg-light">
+                  <h5 class="mb-0 fw-semibold">🔷 Shapes</h5>
+                </div>
+                <div class="tool-content p-3">
+                  <div class="d-grid gap-2">
+                    <button
+                      class="btn btn-outline-primary"
+                      (click)="addRectangle()"
+                    >
+                      ⬜ Rectangle
+                    </button>
+                    <button
+                      class="btn btn-outline-primary"
+                      (click)="addCircle()"
+                    >
+                      ⭕ Circle
+                    </button>
+                    <button
+                      class="btn btn-outline-primary"
+                      (click)="addTriangle()"
+                    >
+                      🔺 Triangle
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Image Upload -->
+              <div class="tool-section">
+                <div class="tool-header p-3 bg-light">
+                  <h5 class="mb-0 fw-semibold">🖼️ Upload Image</h5>
+                </div>
+                <div class="tool-content p-3">
+                  <input
+                    type="file"
+                    class="form-control"
+                    (change)="onImageUpload($event)"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center: Canvas -->
+          <div class="col-lg-6">
+            <div
+              class="canvas-container bg-white rounded-3 shadow-sm p-4 text-center"
+            >
+              <h3 class="mb-3 fw-semibold">🖼️ Design Canvas</h3>
+              <div class="canvas-wrapper d-inline-block position-relative">
+                <canvas
+                  id="design-canvas"
+                  width="400"
+                  height="500"
+                  class="border border-2 border-dashed border-primary rounded"
+                ></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Sidebar: Assets -->
+          <div class="col-lg-3">
+            <div class="design-assets bg-white rounded-3 shadow-sm h-100">
+              <!-- Background Controls -->
+              <div class="tool-section border-bottom">
+                <div
+                  class="tool-header p-3 bg-light d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="mb-0 fw-semibold">🎨 Backgrounds</h5>
+                  <button
+                    (click)="toggleBackgroundPanel()"
+                    class="btn btn-sm btn-outline-primary"
+                    [class.active]="showBackgroundPanel()"
+                  >
+                    <i
+                      class="fas fa-chevron-down"
+                      [class.fa-chevron-up]="showBackgroundPanel()"
+                    ></i>
+                  </button>
+                </div>
+
+                <div class="tool-panel" [class.show]="showBackgroundPanel()">
+                  <div class="tool-content p-3">
+                    <div class="d-flex gap-2 mb-3">
+                      <button
+                        (click)="removeCanvasBackground()"
+                        class="btn btn-outline-danger btn-sm flex-fill"
+                      >
+                        <i class="fas fa-times me-1"></i>Remove
+                      </button>
+                      <label
+                        class="btn btn-outline-primary btn-sm flex-fill mb-0"
+                      >
+                        <i class="fas fa-upload me-1"></i>Upload
+                        <input
+                          type="file"
+                          accept="image/*"
+                          (change)="onBackgroundImageUpload($event)"
+                          class="d-none"
+                        />
+                      </label>
+                    </div>
+
+                    <div class="background-scroll-area">
+                      <div class="background-grid">
+                        <div
+                          *ngFor="let bg of backgrounds"
+                          class="background-item"
+                          (click)="setCanvasBackground(bg.url)"
+                          [title]="bg.name"
+                        >
+                          <img
+                            [src]="bg.url"
+                            [alt]="bg.name"
+                            class="w-100 h-100 object-fit-cover"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sticker Controls -->
+              <div class="tool-section">
+                <div
+                  class="tool-header p-3 bg-light d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="mb-0 fw-semibold">⭐ Stickers</h5>
+                  <button
+                    (click)="toggleStickerPanel()"
+                    class="btn btn-sm btn-outline-primary"
+                    [class.active]="showStickerPanel()"
+                  >
+                    <i
+                      class="fas fa-chevron-down"
+                      [class.fa-chevron-up]="showStickerPanel()"
+                    ></i>
+                  </button>
+                </div>
+
+                <div class="tool-panel" [class.show]="showStickerPanel()">
+                  <div class="tool-content p-3">
+                    <div class="sticker-scroll-area">
+                      <div class="sticker-grid">
+                        <div
+                          *ngFor="let sticker of stickers"
+                          class="sticker-item"
+                          (click)="addStickerToCanvas(sticker.url)"
+                          [title]="sticker.name"
+                        >
+                          <img
+                            [src]="sticker.url"
+                            [alt]="sticker.name"
+                            class="w-100 h-100 object-fit-contain"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save Section (Below Canvas) -->
+        <div class="save-section mt-4">
+          <div class="row justify-content-center">
+            <div class="col-lg-6">
+              <div class="bg-white rounded-3 shadow-sm p-4">
+                <!-- For regular users -->
+                <div *ngIf="isUser()" class="text-center">
+                  <button
+                    (click)="addToCart()"
+                    [disabled]="isSaving()"
+                    class="btn btn-primary btn-lg px-5 py-3 fw-semibold"
+                  >
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    <span *ngIf="!isSaving()">Save & Add to Cart</span>
+                    <span *ngIf="isSaving()">{{ saveMessage() }}</span>
+                  </button>
+                </div>
+
+                <!-- For sellers -->
+                <div *ngIf="isSeller()">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <button
+                        (click)="saveAsTemplate()"
+                        [disabled]="isSaving()"
+                        class="btn btn-success btn-lg w-100 py-3 fw-semibold"
+                      >
+                        <i class="fas fa-store me-2"></i>
+                        <span *ngIf="!isSaving()">Start Selling </span>
+                        <span *ngIf="isSaving()">{{ saveMessage() }}</span>
+                      </button>
+                    </div>
+
+                    <div class="col-md-6">
+                      <button
+                        (click)="addToCart()"
+                        [disabled]="isSaving()"
+                        class="btn btn-primary btn-lg w-100 py-3 fw-semibold"
+                      >
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        <span *ngIf="!isSaving()">Add to My Cart</span>
+                        <span *ngIf="isSaving()">{{ saveMessage() }}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Save status message -->
+                <div
+                  *ngIf="saveMessage()"
+                  class="save-message mt-3 p-3 rounded text-center fw-medium"
+                  [class.alert-danger]="
+                    saveMessage().includes('Failed') ||
+                    saveMessage().includes('Error')
+                  "
+                  [class.alert-success]="saveMessage().includes('successfully')"
+                >
+                  {{ saveMessage() }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    } }
+  </div>
+</div>
