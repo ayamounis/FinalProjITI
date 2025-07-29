@@ -19,7 +19,7 @@ export class DesignProductService {
 
   // To get all the available templates
   getTemplates(): Observable<ProductsTemplatesResponse[]> {
-    return this.http.get<ProductsTemplatesResponse[]>(`${this.api}/Products/PublicTemplates`);
+    return this.http.get<ProductsTemplatesResponse[]>(`${this.api}/Products/TopTemplates`);
   }
 
   // To save a new created design 
