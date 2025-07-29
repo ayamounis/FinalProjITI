@@ -110,18 +110,15 @@
 
 /* Special styling for login/register buttons */
 .login-btn {
-  background: linear-gradient(45deg, #1100ab, #2e225c);
+  background: #2e225c;
   color: white !important;
   border-radius: 25px;
   padding: 10px 20px !important;
   margin-right: 10px;
-  transition: all 0.3s ease;
 }
 
 .login-btn:hover {
-  background: linear-gradient(45deg, #2e225c, #3a2b6e);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(46, 34, 92, 0.3);
+  background: #2e225c !important;
   color: white !important;
 }
 
@@ -131,17 +128,14 @@
 }
 
 .register-btn {
-  background: linear-gradient(45deg, #198754, #1a8754);
+  background: #198754;
   color: white !important;
   border-radius: 25px;
   padding: 10px 20px !important;
-  transition: all 0.3s ease;
 }
 
 .register-btn:hover {
-  background: linear-gradient(45deg, #1a8754, #2e225c);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(25, 135, 84, 0.3);
+  background: #198754 !important;
   color: white !important;
 }
 
@@ -151,17 +145,14 @@
 }
 
 .logout-btn {
-  background: linear-gradient(45deg, #fc4e68, #ed2b48);
+  background: #c21319;
   color: white !important;
   border-radius: 25px;
   padding: 10px 20px !important;
-  transition: all 0.3s ease;
 }
 
 .logout-btn:hover {
-  background: linear-gradient(45deg, #ed2b48, #2e225c);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(252, 78, 104, 0.3);
+  background: #c21319 !important;
   color: white !important;
 }
 

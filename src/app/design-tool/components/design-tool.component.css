@@ -1,6 +1,6 @@
 /* Main Container */
  .design-container {
-	 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	 background: #ffffff;
 	 min-height: 100vh;
 	 padding: 1rem 0;
 }
@@ -12,11 +12,22 @@
 	 margin: 0 1rem;
 	 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
+
+.header-section h1 {
+	 color: #23384a !important;
+	 text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-section p {
+	 color: #2e225c !important;
+	 font-weight: 600;
+}
 /* Template Section */
  .template-section h2 {
 	 font-family: "Lucida Handwriting", "Segoe Script";
 	 font-size: 1.8rem;
-	 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	 color: #23384a !important;
+	 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
  .template-section .template-card {
 	 transition: all 0.3s ease;
@@ -29,7 +40,7 @@
 	 box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
 }
  .template-section .template-card.border-primary {
-	 border: 3px solid #0d6efd !important;
+	 border: 3px solid #2e225c !important;
 	 transform: translateY(-3px);
 }
  .template-section .template-card .card-img-top {
@@ -54,12 +65,12 @@
 	 opacity: 0.5;
 }
  .quick-actions-bar .btn-warning {
-	 background: linear-gradient(45deg, #ffc107, #fd7e14);
+	 background: linear-gradient(45deg, #2e225c, #3a2b6e);
 	 border: none;
-	 color: #000;
+	 color: #ffffff;
 }
  .quick-actions-bar .btn-warning:hover {
-	 background: linear-gradient(45deg, #e0a800, #e8680e);
+	 background: linear-gradient(45deg, #3a2b6e, #2e225c);
 }
 /* Design Workspace */
  .design-workspace {
@@ -79,7 +90,7 @@
 	 border-bottom: none !important;
 }
  .tool-header {
-	 background: linear-gradient(45deg, #f8f9fa, #e9ecef) !important;
+	 background: #f8f9fa !important;
 	 border-bottom: 1px solid #dee2e6;
 }
  .tool-header h5 {
@@ -90,9 +101,9 @@
 	 border-radius: 6px;
 }
  .tool-header .btn.active {
-	 background: #0d6efd;
-	 color: white;
-	 border-color: #0d6efd;
+	 background: #2e225c;
+	 color: #ffffff;
+	 border-color: #2e225c;
 }
  .tool-content .btn {
 	 border-radius: 8px;
@@ -204,18 +215,20 @@
 	 transform: none;
 }
  .save-section .btn-primary {
-	 background: linear-gradient(45deg, #0d6efd, #6610f2);
+	 background: #2e225c;
 	 border: none;
+	 color: #ffffff;
 }
  .save-section .btn-primary:hover:not(:disabled) {
-	 background: linear-gradient(45deg, #0b5ed7, #520dc2);
+	 background: #3a2b6e;
 }
  .save-section .btn-success {
-	 background: linear-gradient(45deg, #198754, #20c997);
+	 background: #1a8754;
 	 border: none;
+	 color: #ffffff;
 }
  .save-section .btn-success:hover:not(:disabled) {
-	 background: linear-gradient(45deg, #157347, #1aa179);
+	 background: #198754;
 }
  .save-message {
 	 border-radius: 8px;
