@@ -20,7 +20,7 @@
       <!-- Email -->
       <div class="form-floating mb-3">
         <input formControlName="email" type="text" class="form-control" id="email" placeholder="Email or Phone">
-        <label for="email">Email or Phone</label>
+        <label for="email">Please Enter Your Email </label>
         @if (email?.errors && email?.touched) {
           <div class="alert alert-danger p-1 mt-1">
             @if (email?.hasError('required')) { <p class="m-0">Email is required</p> }

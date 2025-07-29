@@ -1,103 +1,192 @@
-<!-- Hero Section with Slider -->
-<section id="heroCarousel" class="position-relative container carousel slide p-4" data-bs-ride="carousel" data-bs-interval="2000">
-  <!-- Indicators -->
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-  </div>
-
-  <!-- Slides -->
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="img/wOU.jpg" class="d-block w-100" alt="Slide 1">
+<!-- Hero Section with Fixed Slider -->
+<section class="hero-section">
+  <div id="heroCarousel" class="hero-carousel carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
     </div>
-    <div class="carousel-item">
-      <img src="img/unnamed (5).png" class="d-block w-100" alt="Slide 2">
-    </div>
-    <div class="carousel-item">
-      <img src="img/WhatsApp Image 2025-07-15 at 06.53.25_20d789cc.jpg" class="d-block w-100" alt="Slide 3">
-    </div>
-  </div>
 
-  <!-- Shared Button -->
-  <div class="position-absolute top-50 start-50 translate-middle z-3" style="transform: translate(-50%, 300%) !important;">
-    <button class="btn btn-secondary btn-lg" routerLink="/products">Design Your Print Now</button>
-  </div>
+    <!-- Slides -->
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <div class="hero-slide">
+          <img src="img/slideer.jpg" alt="Custom Design Products">
+          <div class="hero-overlay">
+            <div class="hero-content">
+              <button class="hero-cta" routerLink="/design">Start Designing Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="hero-slide">
+          <img src="img/unnamed (5).png" alt="Quality Products">
+          <div class="hero-overlay">
+            <div class="hero-content">
+              <button class="hero-cta" routerLink="/products">Explore Products</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="hero-slide">
+          <img src="img/WhatsApp Image 2025-07-15 at 06.53.25_20d789cc.jpg" alt="Fast Delivery">
+          <div class="hero-overlay">
+            <div class="hero-content">
+              <button class="hero-cta" routerLink="/products">Shop Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <!-- Controls -->
-  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
 </section>
 
-
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-palette"></i>
+        </div>
+        <h3>Custom Design</h3>
+        <p>Create unique designs with our advanced design tool</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-shipping-fast"></i>
+        </div>
+        <h3>Fast Delivery</h3>
+        <p>Quick and reliable shipping to your doorstep</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-medal"></i>
+        </div>
+        <h3>Premium Quality</h3>
+        <p>High-quality materials and printing technology</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- About Us Section -->
-<section class="about-us text-center py-5">
-  <h2 class="fw-bold mb-4">Who We Are</h2>
-  <p class="lead mx-auto w-75">
-    We are a leading print-on-demand company dedicated to providing high-quality custom printed products.
-    Our mission is to help you express your creativity through our wide range of customizable items.
-  </p>
-  <div class="d-flex justify-content-center gap-5 my-4">
-    <div class="icon text-center">
-      <img src="assets/quality.svg" alt="Quality Prints" width="50">
-      <p>Quality Prints</p>
+<section class="about-section">
+  <div class="container">
+    <div class="about-content">
+      <div class="about-text">
+        <h2>Who We Are</h2>
+        <p class="lead">
+          We are a leading print-on-demand company dedicated to providing high-quality custom printed products.
+          Our mission is to help you express your creativity through our wide range of customizable items.
+        </p>
+        <div class="about-stats">
+          <div class="stat-item">
+            <span class="stat-number">10K+</span>
+            <span class="stat-label">Happy Customers</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Product Categories</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Customer Support</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-image">
+        <img src="img/logo_no_bg.png" alt="About Us">
+      </div>
     </div>
-    <div class="icon text-center">
-      <img src="assets/delivery.svg" alt="Fast Delivery" width="50">
-      <p>Fast Delivery</p>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Explore Our Categories</h2>
+      <p>Choose from our wide range of customizable products</p>
     </div>
-    <div class="icon text-center">
-      <img src="assets/custom.svg" alt="Customizable Products" width="50">
-      <p>Customizable Products</p>
+    <div class="categories-grid">
+      @for (category of categories; track category.id) {
+        <div class="category-card" [routerLink]="['/products']" [queryParams]="{ category: category.id }">
+          <div class="category-image">
+            <img [src]="category.image" [alt]="category.name" />
+            <div class="category-overlay">
+              <span class="view-more">View Products</span>
+            </div>
+          </div>
+          <div class="category-content">
+            <h3>{{ category.name }}</h3>
+            <p>{{ category.description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>How It Works</h2>
+      <p>Simple steps to create your custom products</p>
+    </div>
+    <div class="steps-grid">
+      @for (step of steps; track step.title; let i = $index) {
+        <div class="step-card">
+          <div class="step-number">{{ i + 1 }}</div>
+          <div class="step-content">
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.description }}</p>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </section>
 
 <!-- Promotional Video Section -->
-<section class="promotional-video text-center py-5 bg-light">
-  <h2 class="fw-bold mb-4">Watch How It Works</h2>
-  <div class="ratio ratio-16x9 w-75 mx-auto">
-    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-            title="YouTube video"
-            allowfullscreen>
-    </iframe>
-  </div>
-</section>
-
-<!-- Categories Section -->
-<section class="categories py-5 text-center">
-  <h2 class="fw-bold mb-4">Categories</h2>
-  <div class="d-flex flex-wrap justify-content-center gap-4">
-    @for (category of categories; track category.id) {
-      <a class="category-card shadow-sm p-3 rounded-4 text-decoration-none text-dark"
-         [routerLink]="['/products']"
-         [queryParams]="{ category: category.id }"
-         style="width: 220px;">
-        <img [src]="category.image" [alt]="category.name" class="img-fluid rounded-3 mb-2" />
-        <h4 class="fw-bold">{{ category.name }}</h4>
-        <p class="small text-muted">{{ category.description }}</p>
-      </a>
-    }
-  </div>
-</section>
-
-<!-- How It Works Section -->
-<section class="how-it-works py-5 text-center bg-light">
-  <h2 class="fw-bold mb-4">How It Works</h2>
-  <div class="d-flex flex-wrap justify-content-center gap-5">
-    @for (step of steps; track step.title) {
-      <div class="step-card">
-        <h4 class="fw-bold">{{ step.title }}</h4>
-        <p>{{ step.description }}</p>
+<section class="video-section">
+  <div class="container">
+    <div class="video-content">
+      <div class="video-text">
+        <h2>See How It Works</h2>
+        <p>Watch our quick tutorial to learn <br> how easy it is to create your custom designs</p>
       </div>
-    }
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                title="How to create custom designs"
+                allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Ready to Start Creating?</h2>
+      <p>Join thousands of satisfied customers who trust us for their custom printing needs</p>
+              <button class="cta-button" routerLink="/design">Start Your Design</button>
+    </div>
   </div>
 </section>
