@@ -154,7 +154,7 @@ export class SellerProfileComponent implements OnInit {
   }
 
   navigateToAddProduct(): void {
-    this.router.navigate(['/add-product']);
+    this.router.navigate(['/design']);
   }
 
   navigateToEditProduct(productId: number): void {
