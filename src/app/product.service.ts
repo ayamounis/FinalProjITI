@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, catchError } from 'rxjs';
 import { Product } from './product';
 
@@ -8,6 +8,8 @@ import { Product } from './product';
 })
 export class ProductService {
   private apiUrl = 'https://print-on-demand.runasp.net/api/Products/PublicTemplates';
+  private deleteApiUrl = 'https://print-on-demand.runasp.net/api/Products/Templates';
+
 
   constructor(private http: HttpClient) {}
   
@@ -158,7 +160,25 @@ export class ProductService {
     );
     
   }
+// Delete product method
+  deleteProduct(productId: number): Observable<any> {
+    const url = `${this.deleteApiUrl}/${productId}`;
+    
+    // Get the authorization token from localStorage or your auth service
+    const token = localStorage.getItem('token'); // adjust this based on how you store your token
+    
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
 
+    return this.http.delete(url, { headers }).pipe(
+      catchError(error => {
+        console.error('Error deleting product:', error);
+        throw error; // Re-throw the error so the component can handle it
+      })
+    );
+  }
   // Additional methods for filtering
   getProductsByCategory(category: number): Observable<Product[]> {
     return of(this.mockProducts.filter(p => p.category === category));

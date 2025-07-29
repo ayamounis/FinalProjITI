@@ -9,6 +9,7 @@ import { SellerProfile } from '../seller-profile';
 import { UpdateSellerProfile } from '../update-seller-profile';
 import { ProductTemplate } from '../product-template';
 import { catchError, finalize } from 'rxjs/operators';
+import { ProductService } from '../product.service';
 import { of } from 'rxjs';
 
 @Component({
@@ -23,6 +24,7 @@ export class SellerProfileComponent implements OnInit {
   private sellerProfileService = inject(SellerProfileService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private productService = inject(ProductService);
 
   profileForm: FormGroup;
   sellerProfile: SellerProfile | null = null;
@@ -33,6 +35,8 @@ export class SellerProfileComponent implements OnInit {
   error: string | null = null;
   showErrorImage = false; 
   successMessage: string | null = null;
+  deleteLoading = false;
+  deleteError: string | null = null; 
 
   constructor() {
     this.profileForm = this.fb.group({
@@ -148,7 +152,51 @@ export class SellerProfileComponent implements OnInit {
     }
   }
 
+// Delete product function - Simplest solution
+deleteProduct(productId: number, productName: string): void {
+  // Show confirmation dialog
+  const confirmDelete = confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`);
   
+  if (!confirmDelete) {
+    return;
+  }
+
+  this.deleteLoading = true;
+  this.deleteError = null;
+  this.successMessage = null;
+
+  this.productService.deleteProduct(productId)
+    .pipe(
+      catchError(error => {
+        console.error('Error deleting product:', error);
+        
+        if (error.status === 401) {
+          this.deleteError = 'Session expired. Please log in again.';
+          setTimeout(() => {
+            this.authService.logout();
+            this.router.navigate(['/login']);
+          }, 2000);
+        } else if (error.status === 404) {
+          this.deleteError = 'Product not found.';
+        } else if (error.status === 403) {
+          this.deleteError = 'You are not authorized to delete this product.';
+        } else {
+          this.deleteError = 'Failed to delete product. Please try again.';
+        }
+        
+        return of(null);
+      }),
+      finalize(() => this.deleteLoading = false)
+    )
+    .subscribe(result => {
+      // Remove the condition - always reload if we reach here
+      this.successMessage = `Product "${productName}" deleted successfully.`;
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    });
+}
   retryLoadProfile(): void {
     this.loadProfile();
   }

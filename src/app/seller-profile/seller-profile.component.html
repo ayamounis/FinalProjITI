@@ -167,15 +167,22 @@
                   <div class="product-price">{{ product.basePrice }} EGP</div>
                   <div class="product-date">{{ formatDate(product.createdAt) }}</div>
                 </div>
-                <!-- <div class="product-actions">
-                  <button class="edit-btn" (click)="navigateToEditProduct(product.productTemplateId)">Edit</button>
-                  <button class="toggle-btn" [class.deactivate]="product.isActive">
-                    {{ product.isActive ? 'Deactivate' : 'Activate' }}
-                  </button>
-                </div> -->
+                <div class="product-actions">
+                  <!-- <button class="edit-btn" (click)="navigateToEditProduct(product.productTemplateId)">Edit</button>
+                  -->
+           <button 
+  (click)="deleteProduct(product.productTemplateId, product.name)"
+  [disabled]="deleteLoading"
+  class="btn btn-outline-danger btn-sm">
+  <span *ngIf="deleteLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+  <i *ngIf="!deleteLoading" class="fas fa-trash me-2"></i>
+  {{ deleteLoading ? 'Deleting...' : 'Delete' }}
+</button>
+                </div>
               </div>
             }
           </div>
+          <button class="add-product-btn" (click)="navigateToAddProduct()">Add New Product</button>
         }
       </div>
 
