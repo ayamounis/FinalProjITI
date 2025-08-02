@@ -10,11 +10,16 @@ import {
   PLATFORM_ID,
   OnInit,
 } from '@angular/core';
-import { NgIf, NgFor, NgOptimizedImage, isPlatformBrowser, CommonModule } from '@angular/common';
+import {
+  NgIf,
+  NgFor,
+  NgOptimizedImage,
+  isPlatformBrowser,
+  CommonModule,
+} from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 
-// import { fabric } from 'fabric'; // Removed static import to prevent SSR errors
-declare const fabric: any; // Declared to provide type info to TypeScript without importing the module
+declare const fabric: any;
 
 // Core services
 import { DesignProductService } from '../services/design-product.service';
@@ -33,7 +38,7 @@ import { EnhancedProductTemplate, CanvasState } from '../models/design.model';
 @Component({
   selector: 'app-design-tool',
   standalone: true,
-  imports: [NgIf, NgFor, NgOptimizedImage, CommonModule], // Added CommonModule
+  imports: [NgIf, NgFor, NgOptimizedImage, CommonModule],
   templateUrl: './design-tool.component.html',
   styleUrls: ['./design-tool.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,7 +53,7 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
   // Core Design State
   templates = signal<ProductsTemplatesResponse[]>([]);
   selectedTemplate = signal<EnhancedProductTemplate | null>(null);
-  canvas = signal<any | null>(null); // Changed to 'any' to accommodate dynamic import
+  canvas = signal<any | null>(null);
 
   // UI/UX State
   isLoading = signal(true);
@@ -65,58 +70,370 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
   canRedo = this.historyService.canRedo;
 
   // Internal State Properties
-  private backgroundObjects: any[] = []; // Changed to 'any'
+  private backgroundObjects: any[] = [];
   private pendingTemplate: ProductsTemplatesResponse | null = null;
 
   // Static Data for UI
   backgrounds = [
-    { name: 'Gradient Blue', url: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=500&h=600&fit=crop' },
-    { name: 'Gradient Purple', url: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=500&h=600&fit=crop' },
-    { name: 'Abstract Orange', url: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?w=500&h=600&fit=crop' },
-    { name: 'Geometric Pattern', url: 'https://images.unsplash.com/photo-1557683311-eac922347aa1?w=500&h=600&fit=crop' },
-    { name: 'Watercolor', url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&h=600&fit=crop' },
+    {
+      name: 'Gradient Blue',
+      url: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=500&h=600&fit=crop',
+    },
+    {
+      name: 'Gradient Purple',
+      url: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=500&h=600&fit=crop',
+    },
+    {
+      name: 'Abstract Orange',
+      url: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?w=500&h=600&fit=crop',
+    },
+    {
+      name: 'Geometric Pattern',
+      url: 'https://images.unsplash.com/photo-1557683311-eac922347aa1?w=500&h=600&fit=crop',
+    },
+    {
+      name: 'Watercolor',
+      url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&h=600&fit=crop',
+    },
+    {
+      name: 'Abstract Red Colors',
+      url: 'https://images.unsplash.com/photo-1752350434868-af7431a9f14b?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
+    {
+      name: 'Abstract painting',
+      url: 'https://images.unsplash.com/photo-1710518829060-d92087a61d81?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDQ3fHx8ZW58MHx8fHx8',
+    },
+    {
+      name: 'Abstract white blue',
+      url: 'https://images.unsplash.com/photo-1743657166981-8d8e11d03c3e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDg2fGJvOGpRS1RhRTBZfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Abstract white',
+      url: 'https://images.unsplash.com/photo-1751738567832-aae9ddbf5dfa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDUyfGJvOGpRS1RhRTBZfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Moon',
+      url: 'https://images.unsplash.com/photo-1750268187683-06de0976a77f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDkzfGJvOGpRS1RhRTBZfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Galaxy',
+      url: 'https://images.unsplash.com/photo-1746407177268-951b3b74d773?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDEwMHxibzhqUUtUYUUwWXx8ZW58MHx8fHx8',
+    },
+    {
+      name: 'Pink flower',
+      url: 'https://images.unsplash.com/photo-1749307918200-5e37c3b2fbc4?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDExMnxibzhqUUtUYUUwWXx8ZW58MHx8fHx8',
+    },
+    {
+      name: 'Abstract shapes',
+      url: 'https://images.unsplash.com/photo-1744123101974-b43c01979548?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
+    {
+      name: 'Crystal stone',
+      url: 'https://images.unsplash.com/photo-1521133573892-e44906baee46?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDI0fGlVSXNuVnRqQjBZfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Blue and white smoke',
+      url: 'https://images.unsplash.com/photo-1587833823163-06ab33e739c0?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDEwMnx8fGVufDB8fHx8fA%3D%3D',
+    },
+    {
+      name: 'Abstract painting 2',
+      url: 'https://images.unsplash.com/photo-1590172608208-a6f2eb5584d3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE2Mnx8fGVufDB8fHx8fA%3D%3D',
+    },
+    {
+      name: 'White leaves',
+      url: 'https://images.unsplash.com/photo-1515339760107-1952b7a08454?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDQyfGlVSXNuVnRqQjBZfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Blurred vase',
+      url: 'https://images.unsplash.com/photo-1749567026467-20a96b0ccca3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDc3fGlVSXNuVnRqQjBZfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Moon 2',
+      url: 'https://images.unsplash.com/photo-1751487278706-c1c040f7b6c4?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDEwfDZzTVZqVExTa2VRfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Butterfly',
+      url: 'https://images.unsplash.com/photo-1719258612996-cf0985725b4d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDMxfHx8ZW58MHx8fHx8',
+    },
+    {
+      name: 'Kiwi Bird',
+      url: 'https://images.unsplash.com/photo-1470662061953-318cd8c6c152?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
+    {
+      name: 'Blue Bird',
+      url: 'https://images.unsplash.com/photo-1571110450346-14d72b302022?q=80&w=1208&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
+    {
+      name: 'Pink Jellyfish',
+      url: 'https://images.unsplash.com/photo-1493839523149-2864fca44919?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDMxfDZzTVZqVExTa2VRfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Cherries',
+      url: 'https://images.unsplash.com/photo-1751227046868-2fff7ec5ebb7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDg3fDZzTVZqVExTa2VRfHxlbnwwfHx8fHw%3D',
+    },
+    {
+      name: 'Palestine',
+      url: 'https://images.unsplash.com/photo-1594970484107-5ac7d46a7259?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHBhbGVzdGluZXxlbnwwfHwwfHx8MA%3D%3D',
+    },
+    {
+      name: 'Chess Night',
+      url: 'https://images.unsplash.com/photo-1560174038-da43ac74f01b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2hlc3N8ZW58MHx8MHx8fDA%3D',
+    },
+    {
+      name: 'Cat',
+      url: 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y2F0c3xlbnwwfHwwfHx8MA%3D%3D',
+    },
+    {
+      name: 'Strawberry 2',
+      url: 'https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?q=80&w=715&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    },
   ];
 
   stickers = [
-    { name: 'Heart', url: 'https://cdn-icons-png.flaticon.com/512/833/833472.png' },
-    { name: 'Star', url: 'https://cdn-icons-png.flaticon.com/512/1828/1828884.png' },
-    { name: 'Smile', url: 'https://cdn-icons-png.flaticon.com/512/742/742751.png' },
-    { name: 'Crown', url: 'https://cdn-icons-png.flaticon.com/512/2797/2797387.png' },
-    { name: 'Lightning', url: 'https://cdn-icons-png.flaticon.com/512/1807/1807370.png' },
-    { name: 'Diamond', url: 'https://cdn-icons-png.flaticon.com/512/2697/2697432.png' },
-    { name: 'Flower', url: 'https://cdn-icons-png.flaticon.com/512/2909/2909582.png' },
-    { name: 'Music Note', url: 'https://cdn-icons-png.flaticon.com/512/727/727218.png' },
-    { name: 'Cloud', url: 'https://cdn-icons-png.flaticon.com/512/1146/1146869.png' },
-    { name: 'Fire', url: 'https://cdn-icons-png.flaticon.com/512/616/616430.png' },
-    { name: 'Chat GPT', url:'https://img.icons8.com/?size=100&id=bqBDyembTAOT&format=png&color=000000'},
-    { name: 'AI', url:'https://img.icons8.com/?size=100&id=BU7Clwq5bV9D&format=png&color=000000'},
-    { name: 'Stitch', url: 'https://img.icons8.com/?size=100&id=3IzQhyHba0Dz&format=png&color=000000' },
-    { name: 'Simpson', url: 'https://img.icons8.com/?size=100&id=zPcW8v8lOCVi&format=png&color=000000'},
-    { name: 'Pinterst', url: 'https://img.icons8.com/?size=100&id=XCx1x46OFpdU&format=png&color=000000' },
-    { name: 'Instagram', url: 'https://img.icons8.com/?size=100&id=Plswr633TJUP&format=png&color=000000' },
-    { name: 'TikTok', url: 'https://img.icons8.com/?size=100&id=TDvCl4bDEGpX&format=png&color=000000' },
-    { name: 'LipGloss', url: 'https://img.icons8.com/?size=100&id=gJR5E8y5XQDU&format=png&color=000000' },
-    { name: 'Lipstick', url: 'https://img.icons8.com/?size=100&id=m3RLbKnJ5tbE&format=png&color=000000' },
-    { name: 'Nailpolish', url: 'https://img.icons8.com/?size=100&id=uGDQHJi37azW&format=png&color=000000' },
-    { name: 'Mirror', url: 'https://img.icons8.com/?size=100&id=wBrQJ41DQsu8&format=png&color=000000' },
-    { name: 'Spa Flower', url: 'https://img.icons8.com/?size=100&id=EvA5qGNroiJ1&format=png&color=000000' },
-    { name: 'Owl', url: 'https://img.icons8.com/?size=100&id=lrSRHnxYFj2O&format=png&color=000000' },
-    { name: 'Peace Pigeon', url: 'https://img.icons8.com/?size=100&id=9CpAH3rgRXJF&format=png&color=000000' },
-    { name: 'Blue Bird', url: 'https://img.icons8.com/?size=100&id=qTxbyl0tqoKL&format=png&color=000000' },
-    { name: 'Pinguin', url: 'https://img.icons8.com/?size=100&id=IOGcO7yy74QX&format=png&color=000000' },
-    { name: 'Unicorn', url: 'https://img.icons8.com/?size=100&id=1t3xsvmGzWcV&format=png&color=000000' },
-    { name: 'Butterfly', url: 'https://img.icons8.com/?size=100&id=awWpFSK2hRXy&format=png&color=000000' },
-    { name: 'Cat', url: 'https://img.icons8.com/?size=100&id=tvJZdxwTxU5v&format=png&color=000000' },
-    { name: 'Cat footprint', url: 'https://img.icons8.com/?size=100&id=yln7W1tiSYJz&format=png&color=000000' },
-    { name: 'Dolphin', url: 'https://img.icons8.com/?size=100&id=WctFZL2PrzGq&format=png&color=000000' },
-    { name: 'Heart with pulse', url: 'https://img.icons8.com/?size=100&id=q9vuKXGNoM3C&format=png&color=000000' },   
-    { name: 'Strawberry', url: 'https://img.icons8.com/?size=100&id=Imhl4M7PRLx4&format=png&color=000000' },
-    { name: 'Cherry', url: 'https://img.icons8.com/?size=100&id=hWF5Pjaba7qn&format=png&color=000000' },
-    { name: 'Icecream', url: 'https://img.icons8.com/?size=100&id=WmlKheYYlgmD&format=png&color=000000' },
-    { name: 'Pizza', url: 'https://img.icons8.com/?size=100&id=RTFOTVPzEAwT&format=png&color=000000' },
-    { name: 'Watermelon', url: 'https://img.icons8.com/?size=100&id=Iclk9gpgVzi5&format=png&color=000000' },
-    { name: 'Watermelon 2', url: 'https://img.icons8.com/?size=100&id=gIzaNVp2U2Fd&format=png&color=000000' },
-    { name: 'Plestine', url: 'https://img.icons8.com/?size=100&id=8Op1Hgv1SttF&format=png&color=000000'}
+    {
+      name: 'Heart',
+      url: 'https://cdn-icons-png.flaticon.com/512/833/833472.png',
+    },
+    {
+      name: 'Star',
+      url: 'https://cdn-icons-png.flaticon.com/512/1828/1828884.png',
+    },
+    {
+      name: 'Smile',
+      url: 'https://cdn-icons-png.flaticon.com/512/742/742751.png',
+    },
+    {
+      name: 'Crown',
+      url: 'https://cdn-icons-png.flaticon.com/512/2797/2797387.png',
+    },
+    {
+      name: 'Lightning',
+      url: 'https://cdn-icons-png.flaticon.com/512/1807/1807370.png',
+    },
+    {
+      name: 'Diamond',
+      url: 'https://cdn-icons-png.flaticon.com/512/2697/2697432.png',
+    },
+    {
+      name: 'Flower',
+      url: 'https://cdn-icons-png.flaticon.com/512/2909/2909582.png',
+    },
+    {
+      name: 'Music Note',
+      url: 'https://cdn-icons-png.flaticon.com/512/727/727218.png',
+    },
+    {
+      name: 'Cloud',
+      url: 'https://cdn-icons-png.flaticon.com/512/1146/1146869.png',
+    },
+    {
+      name: 'Fire',
+      url: 'https://cdn-icons-png.flaticon.com/512/616/616430.png',
+    },
+    {
+      name: 'Chat GPT',
+      url: 'https://img.icons8.com/?size=100&id=bqBDyembTAOT&format=png&color=000000',
+    },
+    {
+      name: 'AI',
+      url: 'https://img.icons8.com/?size=100&id=BU7Clwq5bV9D&format=png&color=000000',
+    },
+    {
+      name: 'Stitch',
+      url: 'https://img.icons8.com/?size=100&id=3IzQhyHba0Dz&format=png&color=000000',
+    },
+    {
+      name: 'Simpson',
+      url: 'https://img.icons8.com/?size=100&id=zPcW8v8lOCVi&format=png&color=000000',
+    },
+    {
+      name: 'Pinterst',
+      url: 'https://img.icons8.com/?size=100&id=XCx1x46OFpdU&format=png&color=000000',
+    },
+    {
+      name: 'Instagram',
+      url: 'https://img.icons8.com/?size=100&id=Plswr633TJUP&format=png&color=000000',
+    },
+    {
+      name: 'TikTok',
+      url: 'https://img.icons8.com/?size=100&id=TDvCl4bDEGpX&format=png&color=000000',
+    },
+    {
+      name: 'LipGloss',
+      url: 'https://img.icons8.com/?size=100&id=gJR5E8y5XQDU&format=png&color=000000',
+    },
+    {
+      name: 'Lipstick',
+      url: 'https://img.icons8.com/?size=100&id=m3RLbKnJ5tbE&format=png&color=000000',
+    },
+    {
+      name: 'Nailpolish',
+      url: 'https://img.icons8.com/?size=100&id=uGDQHJi37azW&format=png&color=000000',
+    },
+    {
+      name: 'Mirror',
+      url: 'https://img.icons8.com/?size=100&id=wBrQJ41DQsu8&format=png&color=000000',
+    },
+    {
+      name: 'Spa Flower',
+      url: 'https://img.icons8.com/?size=100&id=EvA5qGNroiJ1&format=png&color=000000',
+    },
+    {
+      name: 'Owl',
+      url: 'https://img.icons8.com/?size=100&id=lrSRHnxYFj2O&format=png&color=000000',
+    },
+    {
+      name: 'Peace Pigeon',
+      url: 'https://img.icons8.com/?size=100&id=9CpAH3rgRXJF&format=png&color=000000',
+    },
+    {
+      name: 'Blue Bird',
+      url: 'https://img.icons8.com/?size=100&id=qTxbyl0tqoKL&format=png&color=000000',
+    },
+    {
+      name: 'Pinguin',
+      url: 'https://img.icons8.com/?size=100&id=IOGcO7yy74QX&format=png&color=000000',
+    },
+    {
+      name: 'Unicorn',
+      url: 'https://img.icons8.com/?size=100&id=1t3xsvmGzWcV&format=png&color=000000',
+    },
+    {
+      name: 'Butterfly',
+      url: 'https://img.icons8.com/?size=100&id=awWpFSK2hRXy&format=png&color=000000',
+    },
+    {
+      name: 'Cat',
+      url: 'https://img.icons8.com/?size=100&id=tvJZdxwTxU5v&format=png&color=000000',
+    },
+    {
+      name: 'Cat footprint',
+      url: 'https://img.icons8.com/?size=100&id=yln7W1tiSYJz&format=png&color=000000',
+    },
+    {
+      name: 'Dolphin',
+      url: 'https://img.icons8.com/?size=100&id=WctFZL2PrzGq&format=png&color=000000',
+    },
+    {
+      name: 'Heart with pulse',
+      url: 'https://img.icons8.com/?size=100&id=q9vuKXGNoM3C&format=png&color=000000',
+    },
+    {
+      name: 'Strawberry',
+      url: 'https://img.icons8.com/?size=100&id=Imhl4M7PRLx4&format=png&color=000000',
+    },
+    {
+      name: 'Cherry',
+      url: 'https://img.icons8.com/?size=100&id=hWF5Pjaba7qn&format=png&color=000000',
+    },
+    {
+      name: 'Icecream',
+      url: 'https://img.icons8.com/?size=100&id=WmlKheYYlgmD&format=png&color=000000',
+    },
+    {
+      name: 'Pizza',
+      url: 'https://img.icons8.com/?size=100&id=RTFOTVPzEAwT&format=png&color=000000',
+    },
+    {
+      name: 'Watermelon',
+      url: 'https://img.icons8.com/?size=100&id=Iclk9gpgVzi5&format=png&color=000000',
+    },
+    {
+      name: 'Watermelon 2',
+      url: 'https://img.icons8.com/?size=100&id=gIzaNVp2U2Fd&format=png&color=000000',
+    },
+    {
+      name: 'Plestine',
+      url: 'https://img.icons8.com/?size=100&id=8Op1Hgv1SttF&format=png&color=000000',
+    },
+    {
+      name: 'Coffee Cup',
+      url: 'https://img.icons8.com/?size=100&id=85782&format=png&color=000000'
+    },
+    {
+      name: 'Airplane',
+      url: 'https://img.icons8.com/?size=100&id=86562&format=png&color=000000'
+    },
+    {
+      name: 'Camera',
+      url: 'https://img.icons8.com/?size=100&id=85020&format=png&color=000000'
+    },
+    {
+      name: 'Message',
+      url: 'https://cdn-icons-png.flaticon.com/256/4289/4289411.png'
+    },
+    {
+      name: 'Love Birds',
+      url: 'https://cdn-icons-png.flaticon.com/256/4289/4289413.png'
+    },
+    {
+      name: 'Tea Cup',
+      url: 'https://cdn-icons-png.flaticon.com/256/4288/4288864.png'
+    },
+    {
+      name: 'Blue Bird',
+      url: 'https://cdn-icons-png.flaticon.com/256/4288/4288987.png'
+    },
+    {
+      name: 'Motivational Words',
+      url: 'https://cdn-icons-png.flaticon.com/256/4329/4329949.png'
+    },
+    {
+      name: 'Motivational Words 2',
+      url: 'https://cdn-icons-png.flaticon.com/256/4228/4228687.png'
+    },
+    {
+      name: 'Motivational Words 3',
+      url: 'https://cdn-icons-png.flaticon.com/256/4228/4228711.png'
+    },
+    {
+      name: 'Winter',
+      url: 'https://cdn-icons-png.flaticon.com/256/4213/4213567.png'
+    },
+    {
+      name: 'October',
+      url: 'https://cdn-icons-png.flaticon.com/256/4213/4213540.png'
+    },
+    {
+      name: 'Swan',
+      url: 'https://cdn-icons-png.flaticon.com/256/4193/4193247.png'
+    },
+    {
+      name: 'Sunflower',
+      url: 'https://cdn-icons-png.flaticon.com/256/7155/7155858.png'
+    },
+    {
+      name: 'Bees',
+      url: 'https://cdn-icons-png.flaticon.com/256/7155/7155871.png'
+    },
+    {
+      name: 'Bike',
+      url: 'https://cdn-icons-png.flaticon.com/256/7144/7144356.png'
+    },
+    {
+      name: 'Rain',
+      url: 'https://cdn-icons-png.flaticon.com/256/6376/6376092.png'
+    },
+    {
+      name: 'Butterflies',
+      url: 'https://cdn-icons-png.flaticon.com/256/7155/7155888.png'
+    },
+    {
+      name: 'Singing Bird',
+      url: 'https://cdn-icons-png.flaticon.com/256/4645/4645734.png'
+    },
+    {
+      name: 'Bird 2',
+      url: 'https://cdn-icons-png.flaticon.com/256/7039/7039046.png'
+    },
+    {
+      name: 'Happy cat',
+      url: 'https://cdn-icons-png.flaticon.com/256/13114/13114981.png'
+    },
+    {
+      name: 'Penguin 2',
+      url: 'https://cdn-icons-png.flaticon.com/256/7155/7155869.png'
+    },
   ];
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
@@ -129,19 +446,14 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
     });
   }
 
-  ngOnInit(): void {
-    // This lifecycle hook is available for logic that runs before the view is initialized.
-    // The main SSR fix logic is in ngAfterViewInit to ensure the canvas DOM element is available.
-  }
+  ngOnInit(): void { }
 
   async ngAfterViewInit() {
-    // We check if the code is running on the browser before executing any canvas logic.
+    // Check if the code is running on the browser before executing any canvas logic.
     if (isPlatformBrowser(this.platformId)) {
       try {
-        // Dynamically import Fabric.js. This loads the script only on the client-side
-        // and attaches the `fabric` object to the global scope (window.fabric).
+        // Dynamically import Fabric.js >> loads the script only on the client-side
         await import('fabric');
-
         // Dispose of any existing canvas instance to prevent memory leaks on re-initialization.
         if (this.canvas()) {
           this.canvas()?.dispose();
@@ -175,7 +487,7 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
   // Loads a selected product template onto the canvas.
   loadTemplate(template: ProductsTemplatesResponse) {
     const canvas = this.canvas();
-    if (canvas && canvas.getObjects().length > 0 && this.selectedTemplate() !== null) {
+    if (canvas && canvas.getObjects().length > 0 && this.selectedTemplate() !== null && this.selectedTemplate()?.productTemplateId !== template.productTemplateId) {
       this.pendingTemplate = template;
       this.showClearConfirm.set(true);
       return;
@@ -185,7 +497,9 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
 
     // Use setTimeout to ensure the canvas element is available in the DOM after state change.
     setTimeout(() => {
-      const canvasEl = document.getElementById('design-canvas') as HTMLCanvasElement;
+      const canvasEl = document.getElementById(
+        'design-canvas'
+      ) as HTMLCanvasElement;
       if (!canvasEl) return;
 
       if (this.canvas()) {
@@ -215,8 +529,9 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
               scaleY: canvasInstance.height! / img.height!,
             }
           );
-          
-          let areas: { x: number, y: number, width: number, height: number }[] = [];
+
+          let areas: { x: number; y: number; width: number; height: number }[] =
+            [];
 
           switch (template.productTemplateId) {
             case 1: // T-shirt
@@ -250,7 +565,9 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
   }
 
   // Draws the visual boundaries for printable areas on the canvas.
-  drawPrintAreas(areas: { x: number; y: number; width: number; height: number }[]) {
+  drawPrintAreas(
+    areas: { x: number; y: number; width: number; height: number }[]
+  ) {
     const canvas = this.canvas();
     if (!canvas) return;
 
@@ -267,7 +584,7 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
         strokeDashArray: [5, 5],
         selectable: false,
         evented: false,
-        isPrintArea: true
+        isPrintArea: true,
       } as any);
 
       canvas.add(printArea);
@@ -405,16 +722,16 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
 
     canvas.add(triangle);
   }
-  
+
   // Toggles the visibility of the background asset panel.
   toggleBackgroundPanel() {
-    this.showBackgroundPanel.update(show => !show);
+    this.showBackgroundPanel.update((show) => !show);
     this.showStickerPanel.set(false);
   }
 
   // Toggles the visibility of the sticker asset panel.
   toggleStickerPanel() {
-    this.showStickerPanel.update(show => !show);
+    this.showStickerPanel.update((show) => !show);
     this.showBackgroundPanel.set(false);
   }
 
@@ -433,7 +750,10 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
         if (!img) return;
         printAreas.forEach((area, index) => {
           img.clone((clonedImg: any) => {
-            const scale = Math.max(area.width / clonedImg.width!, area.height / clonedImg.height!);
+            const scale = Math.max(
+              area.width / clonedImg.width!,
+              area.height / clonedImg.height!
+            );
             const offsetX = (clonedImg.width! * scale - area.width) / 2;
             const offsetY = (clonedImg.height! * scale - area.height) / 2;
 
@@ -445,7 +765,7 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
               selectable: false,
               evented: false,
               isBackground: true,
-              printAreaIndex: index
+              printAreaIndex: index,
             } as any);
 
             clonedImg.clipPath = new fabric.Rect({
@@ -453,7 +773,7 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
               top: area.y,
               width: area.width,
               height: area.height,
-              absolutePositioned: true
+              absolutePositioned: true,
             });
 
             canvas.add(clonedImg);
@@ -474,7 +794,7 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
     const canvas = this.canvas();
     if (!canvas) return;
 
-    this.backgroundObjects.forEach(bgObj => {
+    this.backgroundObjects.forEach((bgObj) => {
       canvas.remove(bgObj);
     });
     this.backgroundObjects = [];
@@ -501,7 +821,7 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
           scaleX: scale,
           scaleY: scale,
           selectable: true,
-          evented: true
+          evented: true,
         });
 
         canvas.add(img);
@@ -541,7 +861,7 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
         (img: any) => {
           if (!img) return;
           const canvas = this.canvas()!;
-          const maxWidth = canvas.getWidth() / 3; 
+          const maxWidth = canvas.getWidth() / 3;
           const scaleFactor = img.width! > maxWidth ? maxWidth / img.width! : 1;
 
           img.set({
@@ -649,17 +969,25 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
     this.saveMessage.set('Preparing your design...');
 
     try {
-      const canvasJSON = JSON.stringify(canvas.toJSON(['id', 'selectable', 'evented', 'crossOrigin', 'src']));
+      const canvasJSON = JSON.stringify(
+        canvas.toJSON(['id', 'selectable', 'evented', 'crossOrigin', 'src'])
+      );
       this.saveMessage.set('Converting design to image...');
       const imageBlob = await this.convertCanvasToBlob(canvas);
 
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (imageBlob.size > maxSize) {
-        throw new Error(`Image is too large (${Math.round(imageBlob.size / 1024 / 1024)}MB). Please reduce canvas size or image quality.`);
+        throw new Error(
+          `Image is too large (${Math.round(
+            imageBlob.size / 1024 / 1024
+          )}MB). Please reduce canvas size or image quality.`
+        );
       }
 
       this.saveMessage.set('Uploading image...');
-      const response = await firstValueFrom(this.productService.uploadImage(imageBlob));
+      const response = await firstValueFrom(
+        this.productService.uploadImage(imageBlob)
+      );
       const imageUrl = this.extractImageUrl(response);
       console.log('Image uploaded successfully:', imageUrl);
 
@@ -673,10 +1001,13 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
         elements: canvasJSON,
       };
 
-      const templateResponse = await firstValueFrom(this.productService.createTemplateFromDesign(productTemplate));
+      const templateResponse = await firstValueFrom(
+        this.productService.createTemplateFromDesign(productTemplate)
+      );
       console.log('Template created:', templateResponse);
-      this.saveMessage.set('Your product saved successfully! It\'s now available to all users.');
-
+      this.saveMessage.set(
+        "Your product saved successfully! It's now available to all users."
+      );
     } catch (error: any) {
       console.error('Failed to save product:', error);
       this.handleSaveError(error);
@@ -700,17 +1031,25 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
     this.saveMessage.set('Preparing design for cart...');
 
     try {
-      const canvasJSON = JSON.stringify(canvas.toJSON(['id', 'selectable', 'evented', 'crossOrigin', 'src']));
+      const canvasJSON = JSON.stringify(
+        canvas.toJSON(['id', 'selectable', 'evented', 'crossOrigin', 'src'])
+      );
       this.saveMessage.set('Converting design to image...');
       const imageBlob = await this.convertCanvasToBlob(canvas);
 
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (imageBlob.size > maxSize) {
-        throw new Error(`Image is too large (${Math.round(imageBlob.size / 1024 / 1024)}MB). Please reduce canvas size or image quality.`);
+        throw new Error(
+          `Image is too large (${Math.round(
+            imageBlob.size / 1024 / 1024
+          )}MB). Please reduce canvas size or image quality.`
+        );
       }
 
       this.saveMessage.set('Uploading image...');
-      const response = await firstValueFrom(this.productService.uploadImage(imageBlob));
+      const response = await firstValueFrom(
+        this.productService.uploadImage(imageBlob)
+      );
       const imageUrl = this.extractImageUrl(response);
       console.log('Image uploaded successfully:', imageUrl);
 
@@ -724,7 +1063,9 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
         elements: canvasJSON,
       };
 
-      const customProductResponse = await firstValueFrom(this.productService.createCustomProduct(customProduct));
+      const customProductResponse = await firstValueFrom(
+        this.productService.createCustomProduct(customProduct)
+      );
 
       if (customProductResponse) {
         console.log('Custom product created:', customProductResponse);
@@ -746,14 +1087,28 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
   }
 
   // Helper to retrieve print area dimensions based on the template ID.
-  private getPrintAreas(templateId: number): { x: number; y: number; width: number; height: number }[] {
+  private getPrintAreas(
+    templateId: number
+  ): { x: number; y: number; width: number; height: number }[] {
     switch (templateId) {
-      case 1: return [{ x: 180, y: 200, width: 150, height: 200 }];
-      case 4: return [{ x: 41, y: 153, width: 59, height: 389 }, { x: 400, y: 153, width: 59, height: 389 }];
-      case 5: return [{ x: 95, y: 250, width: 80, height: 100 }, { x: 328, y: 250, width: 80, height: 100 }];
-      case 6: return [{ x: 108, y: 180, width: 190, height: 250 }];
-      case 7: return [{ x: 160, y: 208, width: 180, height: 320 }];
-      default: return [{ x: 100, y: 150, width: 300, height: 300 }];
+      case 1:
+        return [{ x: 180, y: 200, width: 150, height: 200 }];
+      case 4:
+        return [
+          { x: 41, y: 153, width: 59, height: 389 },
+          { x: 400, y: 153, width: 59, height: 389 },
+        ];
+      case 5:
+        return [
+          { x: 95, y: 250, width: 80, height: 100 },
+          { x: 328, y: 250, width: 80, height: 100 },
+        ];
+      case 6:
+        return [{ x: 108, y: 180, width: 190, height: 250 }];
+      case 7:
+        return [{ x: 160, y: 208, width: 180, height: 320 }];
+      default:
+        return [{ x: 100, y: 150, width: 300, height: 300 }];
     }
   }
 
@@ -775,7 +1130,9 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
 
     const canvasState: CanvasState = {
       version: Date.now().toString(),
-      objects: canvas.getObjects().map((obj: any) => obj.toObject(['id', 'selectable', 'evented'])),
+      objects: canvas
+        .getObjects()
+        .map((obj: any) => obj.toObject(['id', 'selectable', 'evented'])),
       background: canvas.backgroundColor as string,
       backgroundImage: backgroundImageData,
       width: canvas.getWidth(),
@@ -789,7 +1146,8 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
   private loadCanvasState(state: CanvasState) {
     const canvas = this.canvas();
     if (!canvas) return;
-    canvas.loadFromJSON({
+    canvas.loadFromJSON(
+      {
         version: state.version,
         objects: state.objects,
         background: state.background,
@@ -797,7 +1155,9 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
       },
       () => {
         canvas.renderAll();
-        setTimeout(() => { this.enableCanvasEvents(); }, 50);
+        setTimeout(() => {
+          this.enableCanvasEvents();
+        }, 50);
       }
     );
   }
@@ -850,10 +1210,10 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
         const dataURL = canvas.toDataURL({
           format: 'jpeg',
           quality: 1.0,
-          multiplier: 1.5
+          multiplier: 2,
         });
 
-        printAreaObjects.forEach(obj => {
+        printAreaObjects.forEach((obj) => {
           obj.set('visible', true);
         });
         canvas.renderAll();
@@ -864,15 +1224,15 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
         }
 
         fetch(dataURL)
-          .then(res => res.blob())
-          .then(blob => {
+          .then((res) => res.blob())
+          .then((blob) => {
             if (blob && blob.size > 0) {
               resolve(blob);
             } else {
               reject(new Error('Failed to convert data URL to blob'));
             }
           })
-          .catch(error => reject(error));
+          .catch((error) => reject(error));
       } catch (error) {
         reject(new Error(`Canvas conversion failed: ${error}`));
       }
@@ -881,7 +1241,8 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
 
   // Extracts the image URL from various possible server response formats.
   private extractImageUrl(response: any): string {
-    const url = response?.url ||
+    const url =
+      response?.url ||
       response?.imageUrl ||
       response?.filePath ||
       response?.data?.url ||
@@ -899,22 +1260,32 @@ export class DesignToolComponent implements AfterViewInit, OnInit {
   private handleSaveError(error: any): void {
     console.error('Full error object:', error);
 
-    if (error.message?.includes('Image upload failed') ||
+    if (
+      error.message?.includes('Image upload failed') ||
       error.message?.includes('too large') ||
-      error.message?.includes('Canvas')) {
+      error.message?.includes('Canvas')
+    ) {
       this.saveMessage.set(error.message);
     } else if (error.status === 0) {
-      this.saveMessage.set('Network error. Please check your connection and try again.');
+      this.saveMessage.set(
+        'Network error. Please check your connection and try again.'
+      );
     } else if (error.status === 401) {
       this.saveMessage.set('Authentication failed. Please log in again.');
     } else if (error.status === 403) {
-      this.saveMessage.set('You do not have permission to perform this action.');
+      this.saveMessage.set(
+        'You do not have permission to perform this action.'
+      );
     } else if (error.status === 500) {
       this.saveMessage.set('Server error. Please try again later.');
     } else {
       const isUser = this.isUser();
-      const failedAction = isUser ? 'save design or add to cart' : 'save template';
-      this.saveMessage.set(`Failed to ${failedAction}. Error: ${error.message || 'Unknown error'}`);
+      const failedAction = isUser
+        ? 'save design or add to cart'
+        : 'save template';
+      this.saveMessage.set(
+        `Failed to ${failedAction}. Error: ${error.message || 'Unknown error'}`
+      );
     }
   }
 }

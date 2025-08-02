@@ -11,10 +11,12 @@
   --light-gray: #f8f9fa;
   --medium-gray: #6c757d;
   --dark-gray: #343a40;
+
 }
 
 /* Global Styles */
 * {
+
   box-sizing: border-box;
 }
 
@@ -29,6 +31,7 @@ body {
   margin: 2rem auto;
   max-width: 1400px;
   padding: 0 1rem;
+
 }
 
 .hero-slide {
@@ -402,6 +405,7 @@ body {
   color: var(--medium-gray);
   font-size: 0.95rem;
   line-height: 1.6;
+
 }
 
 /* Responsive Design */
@@ -470,6 +474,7 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+
   }
 }
 

@@ -23,7 +23,7 @@ export const routes: Routes = [
   { path: 'profile', loadComponent: () => import('./seller-profile/seller-profile.component').then(m => m.SellerProfileComponent) },
   
   // Design tool route 
-  { path: 'design', loadComponent: () => import('./design-tool/components/design-tool.component').then(m => m.DesignToolComponent) },
+  { path: 'design',canActivate: [authGuard] ,loadComponent: () => import('./design-tool/components/design-tool.component').then(m => m.DesignToolComponent) },
   
   { path: "**", redirectTo: 'home', pathMatch: 'full' }
 ];
