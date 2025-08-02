@@ -1,0 +1,435 @@
+<div class="admin-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="container">
+      <h1><i class="fas fa-cog"></i> Admin Dashboard</h1>
+      <p>Manage users and product templates</p>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="dashboard-nav">
+    <div class="container">
+      <div class="nav-tabs">
+        <button
+          class="nav-tab"
+          [class.active]="activeTab === 'users'"
+          (click)="switchTab('users')"
+        >
+          <i class="fas fa-users"></i>
+          Users Management
+        </button>
+        <button
+          class="nav-tab"
+          [class.active]="activeTab === 'templates'"
+          (click)="switchTab('templates')"
+        >
+          <i class="fas fa-box"></i>
+          Product Templates
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="dashboard-content">
+    <div class="container">
+      <!-- Loading Spinner -->
+      @if (isLoading) {
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+      </div>
+      }
+
+      <!-- Users Tab -->
+      @if (activeTab === 'users' && !isLoading) {
+      <div class="users-section">
+        <!-- Search and Actions -->
+        <div class="section-header">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              placeholder="Search users..."
+              [(ngModel)]="userSearchTerm"
+            />
+          </div>
+          <div class="section-actions">
+            <span class="user-count">{{ filteredUsers.length }} users</span>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of paginatedUsers; track user.id) {
+              <tr>
+                <td>
+                  <div class="user-info">
+                    <div class="user-avatar">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                      <span class="user-name"
+                        >{{ user.firstName }} {{ user.lastName }}</span
+                      >
+                      <span class="user-id"
+                        >ID: {{ user.id.substring(0, 8) }}...</span
+                      >
+                    </div>
+                  </div>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phoneNumber || "N/A" }}</td>
+                <td>
+                  <span
+                    class="status-badge"
+                    [class.confirmed]="user.emailConfirmed"
+                  >
+                    {{ user.emailConfirmed ? "Confirmed" : "Pending" }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button
+                      class="btn-edit"
+                      (click)="openUserModal(user)"
+                      title="Edit User"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      class="btn-delete"
+                      (click)="deleteUser(user)"
+                      title="Delete User"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Users Pagination -->
+        @if (totalUserPages > 1) {
+        <div class="pagination-container">
+          <div class="pagination-info">
+            <span
+              >Showing {{ (currentUserPage - 1) * itemsPerPage + 1 }} to
+              {{
+                Math.min(currentUserPage * itemsPerPage, filteredUsers.length)
+              }}
+              of {{ filteredUsers.length }} users</span
+            >
+          </div>
+          <div class="pagination-controls">
+            <button
+              class="pagination-btn"
+              [disabled]="currentUserPage === 1"
+              (click)="goToUserPage(currentUserPage - 1)"
+              title="Previous page"
+            >
+              <i class="fas fa-chevron-left"></i>
+            </button>
+
+            @for (page of getVisibleUserPages(); track page) { @if (page ===
+            '...') {
+            <span class="pagination-ellipsis">...</span>
+            } @else {
+            <button
+              class="pagination-btn page-number"
+              [class.active]="page === currentUserPage"
+              (click)="goToUserPage(Number(page))"
+            >
+              {{ page }}
+            </button>
+            } }
+
+            <button
+              class="pagination-btn"
+              [disabled]="currentUserPage === totalUserPages"
+              (click)="goToUserPage(currentUserPage + 1)"
+              title="Next page"
+            >
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Templates Tab -->
+      @if (activeTab === 'templates' && !isLoading) {
+      <div class="templates-section">
+        <!-- Search and Actions -->
+        <div class="section-header">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              placeholder="Search templates..."
+              [(ngModel)]="templateSearchTerm"
+            />
+          </div>
+          <div class="section-actions">
+            <button class="btn-primary" (click)="openTemplateModal()">
+              <i class="fas fa-plus"></i>
+              Add Template
+            </button>
+            <span class="template-count"
+              >{{ filteredTemplates.length }} templates</span
+            >
+          </div>
+        </div>
+
+        <!-- Templates Grid -->
+        <div class="templates-grid">
+          @for (template of paginatedTemplates; track
+          template.productTemplateId) {
+          <div class="template-card">
+            <div class="template-image">
+              <img [src]="template.imageUrl" [alt]="template.name" />
+              <div class="template-overlay">
+                <button class="btn-edit" (click)="openTemplateModal(template)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-delete" (click)="deleteTemplate(template)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="template-content">
+              <h3>{{ template.name }}</h3>
+              <p class="template-description">{{ template.description }}</p>
+              <div class="template-meta">
+                <span class="price">${{ template.basePrice }}</span>
+                <span class="category">{{
+                  getCategoryName(template.category)
+                }}</span>
+              </div>
+              <div class="template-status">
+                <span class="status-badge" [class.active]="template.isActive">
+                  {{ template.isActive ? "Active" : "Inactive" }}
+                </span>
+                <span class="created-date">{{
+                  formatDate(template.createdAt)
+                }}</span>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+
+        <!-- Templates Pagination -->
+        @if (totalTemplatePages > 1) {
+          <div class="pagination-container">
+            <div class="pagination-info">
+              <span>Showing {{ (currentTemplatePage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentTemplatePage * itemsPerPage, filteredTemplates.length) }} of {{ filteredTemplates.length }} templates</span>
+            </div>
+            <div class="pagination-controls">
+              <button 
+                class="pagination-btn" 
+                [disabled]="currentTemplatePage === 1"
+                (click)="goToTemplatePage(currentTemplatePage - 1)"
+                title="Previous page"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              
+              @for (page of getVisibleTemplatePages(); track page) {
+                @if (page === '...') {
+                  <span class="pagination-ellipsis">...</span>
+                } @else {
+                  <button 
+                    class="pagination-btn page-number"
+                    [class.active]="page === currentTemplatePage"
+                    (click)="goToTemplatePage(Number(page))"
+                  >
+                    {{ page }}
+                  </button>
+                }
+              }
+              
+              <button 
+                class="pagination-btn" 
+                [disabled]="currentTemplatePage === totalTemplatePages"
+                (click)="goToTemplatePage(currentTemplatePage + 1)"
+                title="Next page"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- User Modal -->
+  @if (showUserModal) {
+  <div class="modal-overlay" (click)="closeUserModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditing ? "Edit User" : "Add User" }}</h3>
+        <button class="modal-close" (click)="closeUserModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input
+              type="text"
+              id="firstName"
+              formControlName="firstName"
+              placeholder="Enter first name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              formControlName="lastName"
+              placeholder="Enter last name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="Enter email address"
+            />
+          </div>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="closeUserModal()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="!userForm.valid"
+            >
+              {{ isEditing ? "Update" : "Create" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Template Modal -->
+  @if (showTemplateModal) {
+  <div class="modal-overlay" (click)="closeTemplateModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditing ? "Edit Template" : "Add Template" }}</h3>
+        <button class="modal-close" (click)="closeTemplateModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="templateForm" (ngSubmit)="saveTemplate()">
+          <div class="form-group">
+            <label for="name">Template Name</label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              placeholder="Enter template name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              placeholder="Enter template description"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="basePrice">Base Price</label>
+              <input
+                type="number"
+                id="basePrice"
+                formControlName="basePrice"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category" formControlName="category">
+                @for (category of categories; track category.id) {
+                <option [value]="category.id">{{ category.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="imageUrl">Image URL</label>
+            <input
+              type="url"
+              id="imageUrl"
+              formControlName="imageUrl"
+              placeholder="Enter image URL"
+            />
+          </div>
+          <div class="form-group">
+            <label for="elements">Elements (JSON)</label>
+            <textarea
+              id="elements"
+              formControlName="elements"
+              placeholder="Enter elements JSON"
+              rows="4"
+            ></textarea>
+          </div>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="closeTemplateModal()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="!templateForm.valid"
+            >
+              {{ isEditing ? "Update" : "Create" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  }
+</div>

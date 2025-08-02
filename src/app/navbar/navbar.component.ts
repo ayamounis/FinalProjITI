@@ -10,17 +10,18 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   isSeller: boolean = false;
+  isAdmin: boolean = false;
   userRole: string = '';
-  
+
   // Services injection
   private authService = inject(AuthService);
   private _router = inject(Router);
-  
+
   // Subscriptions
   private authSubscription: Subscription = new Subscription();
   private roleSubscription: Subscription = new Subscription();
@@ -34,12 +35,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authSubscription = this.authService.userData.subscribe({
       next: (token) => {
         this.isLoggedIn = !!token;
-        console.log(token, "Welcome in Our Website");
+        console.log(token, 'Welcome in Our Website');
       },
       error: (err) => {
         console.log(err);
         this.isLoggedIn = false;
-      }
+      },
     });
 
     // الاشتراك في تغييرات دور المستخدم
@@ -47,16 +48,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
       next: (role) => {
         this.userRole = role;
         this.isSeller = role.toLowerCase() === 'seller';
+        this.isAdmin = role.toLowerCase() === 'admin';
       },
       error: (err) => {
         console.log('Role subscription error:', err);
         this.userRole = '';
         this.isSeller = false;
-      }
+        this.isAdmin = false;
+      },
     });
 
     // Log current user data
-    console.log(this.authService.userData.value, "Hello Welcome in Our Website");
+    console.log(
+      this.authService.userData.value,
+      'Hello Welcome in Our Website'
+    );
   }
 
   ngOnDestroy(): void {
