@@ -27,6 +27,14 @@
           <i class="fas fa-box"></i>
           Product Templates
         </button>
+        <button
+          class="nav-tab"
+          [class.active]="activeTab === 'analytics'"
+          (click)="switchTab('analytics')"
+        >
+          <i class="fas fa-chart-bar"></i>
+          Analytics
+        </button>
       </div>
     </div>
   </div>
@@ -237,45 +245,298 @@
 
         <!-- Templates Pagination -->
         @if (totalTemplatePages > 1) {
-          <div class="pagination-container">
-            <div class="pagination-info">
-              <span>Showing {{ (currentTemplatePage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentTemplatePage * itemsPerPage, filteredTemplates.length) }} of {{ filteredTemplates.length }} templates</span>
+        <div class="pagination-container">
+          <div class="pagination-info">
+            <span
+              >Showing {{ (currentTemplatePage - 1) * itemsPerPage + 1 }} to
+              {{
+                Math.min(
+                  currentTemplatePage * itemsPerPage,
+                  filteredTemplates.length
+                )
+              }}
+              of {{ filteredTemplates.length }} templates</span
+            >
+          </div>
+          <div class="pagination-controls">
+            <button
+              class="pagination-btn"
+              [disabled]="currentTemplatePage === 1"
+              (click)="goToTemplatePage(currentTemplatePage - 1)"
+              title="Previous page"
+            >
+              <i class="fas fa-chevron-left"></i>
+            </button>
+
+            @for (page of getVisibleTemplatePages(); track page) { @if (page ===
+            '...') {
+            <span class="pagination-ellipsis">...</span>
+            } @else {
+            <button
+              class="pagination-btn page-number"
+              [class.active]="page === currentTemplatePage"
+              (click)="goToTemplatePage(Number(page))"
+            >
+              {{ page }}
+            </button>
+            } }
+
+            <button
+              class="pagination-btn"
+              [disabled]="currentTemplatePage === totalTemplatePages"
+              (click)="goToTemplatePage(currentTemplatePage + 1)"
+              title="Next page"
+            >
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Analytics Tab -->
+      @if (activeTab === 'analytics' && !isLoading) {
+      <div class="analytics-section">
+        <!-- Analytics Overview -->
+        <div class="analytics-overview">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-users"></i>
             </div>
-            <div class="pagination-controls">
-              <button 
-                class="pagination-btn" 
-                [disabled]="currentTemplatePage === 1"
-                (click)="goToTemplatePage(currentTemplatePage - 1)"
-                title="Previous page"
-              >
-                <i class="fas fa-chevron-left"></i>
-              </button>
-              
-              @for (page of getVisibleTemplatePages(); track page) {
-                @if (page === '...') {
-                  <span class="pagination-ellipsis">...</span>
-                } @else {
-                  <button 
-                    class="pagination-btn page-number"
-                    [class.active]="page === currentTemplatePage"
-                    (click)="goToTemplatePage(Number(page))"
-                  >
-                    {{ page }}
-                  </button>
-                }
-              }
-              
-              <button 
-                class="pagination-btn" 
-                [disabled]="currentTemplatePage === totalTemplatePages"
-                (click)="goToTemplatePage(currentTemplatePage + 1)"
-                title="Next page"
-              >
-                <i class="fas fa-chevron-right"></i>
-              </button>
+            <div class="stat-content">
+              <h3>{{ analytics?.totalUsers || 0 }}</h3>
+              <p>Total Users</p>
             </div>
           </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-store"></i>
+            </div>
+            <div class="stat-content">
+              <h3>{{ analytics?.totalSellers || 0 }}</h3>
+              <p>Seller Profiles</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+              <h3>${{ (analytics?.totalRevenue || 0).toFixed(2) }}</h3>
+              <p>Total Revenue</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-content">
+              <h3>{{ analytics?.totalOrders || 0 }}</h3>
+              <p>Total Orders</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Statistics -->
+        @if (analytics && analytics.monthlyStats &&
+        analytics.monthlyStats.length > 0) {
+        <div class="monthly-stats">
+          <h3>Monthly Statistics</h3>
+          <div class="stats-table">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Revenue</th>
+                  <th>Orders</th>
+                  <th>New Users</th>
+                  <th>New Sellers</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (stat of analytics?.monthlyStats || []; track stat.month) {
+                <tr>
+                  <td>{{ stat.month }}</td>
+                  <td>${{ stat.revenue.toFixed(2) }}</td>
+                  <td>{{ stat.orders }}</td>
+                  <td>{{ stat.newUsers }}</td>
+                  <td>{{ stat.newSellers }}</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
         }
+
+        <!-- Recent Activity -->
+        @if (analytics && analytics.recentActivity &&
+        analytics.recentActivity.length > 0) {
+        <div class="recent-activity">
+          <h3>Recent Activity</h3>
+          <div class="activity-list">
+            @for (activity of analytics?.recentActivity || []; track
+            activity.id) {
+            <div class="activity-item">
+              <div class="activity-icon">
+                @switch (activity.type) { @case ('user_registration') {
+                <i class="fas fa-user-plus"></i>
+                } @case ('seller_registration') {
+                <i class="fas fa-store"></i>
+                } @case ('order_placed') {
+                <i class="fas fa-shopping-cart"></i>
+                } @case ('payment_received') {
+                <i class="fas fa-credit-card"></i>
+                } }
+              </div>
+              <div class="activity-content">
+                <p class="activity-description">{{ activity.description }}</p>
+                <span class="activity-time">{{
+                  formatDate(activity.timestamp)
+                }}</span>
+                @if (activity.amount) {
+                <span class="activity-amount"
+                  >${{ activity.amount.toFixed(2) }}</span
+                >
+                }
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+          <!-- Bar Chart -->
+          <div class="chart-container">
+            <h3>Platform Statistics</h3>
+            <div class="bar-chart">
+              <div class="chart-bars">
+                <div class="bar-group">
+                  <div
+                    class="bar users-bar"
+                    [ngStyle]="{'height': getUserBarHeightPx() + 'px'}"
+                  >
+                    <span class="bar-value">{{
+                      analytics?.totalUsers || 0
+                    }}</span>
+                  </div>
+                  <span class="bar-label">Users</span>
+                </div>
+                <div class="bar-group">
+                  <div
+                    class="bar sellers-bar"
+                    [ngStyle]="{'height': getSellerBarHeightPx() + 'px'}"
+                  >
+                    <span class="bar-value">{{
+                      analytics?.totalSellers || 0
+                    }}</span>
+                  </div>
+                  <span class="bar-label">Sellers</span>
+                </div>
+                <div class="bar-group">
+                  <div
+                    class="bar revenue-bar"
+                    [ngStyle]="{'height': getRevenueBarHeightPx() + 'px'}"
+                  >
+                    <span class="bar-value"
+                      >${{ (analytics?.totalRevenue || 0).toFixed(0) }}</span
+                    >
+                  </div>
+                  <span class="bar-label">Revenue</span>
+                </div>
+                <div class="bar-group">
+                  <div
+                    class="bar orders-bar"
+                    [ngStyle]="{'height': getOrdersBarHeightPx() + 'px'}"
+                  >
+                    <span class="bar-value">{{
+                      analytics?.totalOrders || 0
+                    }}</span>
+                  </div>
+                  <span class="bar-label">Orders</span>
+                </div>
+              </div>
+              <div class="chart-axis">
+                <div class="y-axis">
+                  <span>{{ getMaxCountValue() }}</span>
+                  <span>{{ getMaxCountValue() * 0.75 }}</span>
+                  <span>{{ getMaxCountValue() * 0.5 }}</span>
+                  <span>{{ getMaxCountValue() * 0.25 }}</span>
+                  <span>0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pie Chart -->
+          <div class="chart-container">
+            <h3>Revenue Distribution</h3>
+            <div class="pie-chart">
+              <div class="pie-container">
+                <div
+                  class="pie-segment users-segment"
+                  [style.transform]="
+                    getPieSegmentTransform(0, getUserPercentage())
+                  "
+                >
+                  <div class="segment-label">
+                    Users: {{ getUserPercentage() }}%
+                  </div>
+                </div>
+                <div
+                  class="pie-segment sellers-segment"
+                  [style.transform]="
+                    getPieSegmentTransform(
+                      getUserPercentage(),
+                      getSellerPercentage()
+                    )
+                  "
+                >
+                  <div class="segment-label">
+                    Sellers: {{ getSellerPercentage() }}%
+                  </div>
+                </div>
+                <div
+                  class="pie-segment revenue-segment"
+                  [style.transform]="
+                    getPieSegmentTransform(
+                      getUserPercentage() + getSellerPercentage(),
+                      getRevenuePercentage()
+                    )
+                  "
+                >
+                  <div class="segment-label">
+                    Revenue: {{ getRevenuePercentage() }}%
+                  </div>
+                </div>
+                <div class="pie-center">
+                  <span class="center-label">Total</span>
+                  <span class="center-value">{{ getTotalPieValue() }}</span>
+                </div>
+              </div>
+              <div class="pie-legend">
+                <div class="legend-item">
+                  <div class="legend-color users-color"></div>
+                  <span>Users</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color sellers-color"></div>
+                  <span>Sellers</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color revenue-color"></div>
+                  <span>Revenue</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       }
     </div>

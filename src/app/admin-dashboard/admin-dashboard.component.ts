@@ -14,6 +14,7 @@ import {
   AdminProductTemplate,
   AdminProductTemplateCreate,
   AdminProductTemplateUpdate,
+  AdminAnalytics,
 } from '../interfaces/admin.interface';
 
 @Component({
@@ -27,9 +28,10 @@ export class AdminDashboardComponent implements OnInit {
   // Data arrays
   users: AdminUser[] = [];
   templates: AdminProductTemplate[] = [];
+  analytics: AdminAnalytics | null = null;
 
   // UI state
-  activeTab: 'users' | 'templates' = 'users';
+  activeTab: 'users' | 'templates' | 'analytics' = 'users';
   isLoading: boolean = false;
   showUserModal: boolean = false;
   showTemplateModal: boolean = false;
@@ -85,14 +87,20 @@ export class AdminDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
     this.loadTemplates();
+    this.loadAnalytics();
   }
 
   // Tab switching
-  switchTab(tab: 'users' | 'templates'): void {
+  switchTab(tab: 'users' | 'templates' | 'analytics'): void {
     this.activeTab = tab;
     // Reset pagination when switching tabs
     this.currentUserPage = 1;
     this.currentTemplatePage = 1;
+
+    // Ensure analytics are calculated when switching to analytics tab
+    if (tab === 'analytics' && !this.analytics) {
+      this.calculateAnalyticsFromData();
+    }
   }
 
   // User Management
@@ -102,6 +110,8 @@ export class AdminDashboardComponent implements OnInit {
       next: (users) => {
         this.users = users;
         this.isLoading = false;
+        // Calculate analytics after users are loaded
+        this.calculateAnalyticsFromData();
       },
       error: (error) => {
         console.error('Error loading users:', error);
@@ -173,6 +183,8 @@ export class AdminDashboardComponent implements OnInit {
       next: (templates) => {
         this.templates = templates;
         this.isLoading = false;
+        // Calculate analytics after templates are loaded
+        this.calculateAnalyticsFromData();
       },
       error: (error) => {
         console.error('Error loading templates:', error);
@@ -250,6 +262,47 @@ export class AdminDashboardComponent implements OnInit {
         },
       });
     }
+  }
+
+  // Analytics Management
+  loadAnalytics(): void {
+    this.isLoading = true;
+    this.adminService.getAnalytics().subscribe({
+      next: (analytics) => {
+        this.analytics = analytics;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading analytics:', error);
+        // Fallback to calculating from existing data
+        this.calculateAnalyticsFromData();
+        this.isLoading = false;
+      },
+    });
+  }
+
+  private calculateAnalyticsFromData(): void {
+    // Fallback method to calculate basic analytics from existing data
+    const totalUsers = this.users.length;
+    const totalSellers = this.users.filter(
+      (user) =>
+        user.userName.toLowerCase().includes('seller') ||
+        user.email.toLowerCase().includes('seller')
+    ).length;
+
+    // Mock revenue calculation (in real app, this would come from orders)
+    const totalRevenue =
+      this.templates.reduce((sum, template) => sum + template.basePrice, 0) *
+      0.1; // 10% commission
+
+    this.analytics = {
+      totalUsers,
+      totalSellers,
+      totalRevenue,
+      totalOrders: Math.floor(totalRevenue / 50), // Mock order count
+      monthlyStats: [],
+      recentActivity: [],
+    };
   }
 
   // Filtering
@@ -371,5 +424,148 @@ export class AdminDashboardComponent implements OnInit {
 
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString();
+  }
+
+  // Chart calculation methods
+  getUserGrowthPercentage(): number {
+    const totalUsers = this.analytics?.totalUsers || 0;
+    const maxUsers = this.getMaxUsers();
+    return maxUsers > 0 ? Math.min((totalUsers / maxUsers) * 100, 100) : 0;
+  }
+
+  getMaxUsers(): number {
+    return Math.max(this.analytics?.totalUsers || 0, 100);
+  }
+
+  getSellerGrowthPercentage(): number {
+    const totalSellers = this.analytics?.totalSellers || 0;
+    const maxSellers = this.getMaxSellers();
+    return maxSellers > 0
+      ? Math.min((totalSellers / maxSellers) * 100, 100)
+      : 0;
+  }
+
+  getMaxSellers(): number {
+    return Math.max(this.analytics?.totalSellers || 0, 50);
+  }
+
+  getRevenueGrowthPercentage(): number {
+    const totalRevenue = this.analytics?.totalRevenue || 0;
+    const maxRevenue = this.getMaxRevenue();
+    return maxRevenue > 0
+      ? Math.min((totalRevenue / maxRevenue) * 100, 100)
+      : 0;
+  }
+
+  getMaxRevenue(): number {
+    const currentRevenue = this.analytics?.totalRevenue || 0;
+    return Math.max(currentRevenue, 1000);
+  }
+
+  // Bar Chart Methods
+  getMaxCountValue(): number {
+    const users = this.analytics?.totalUsers || 0;
+    const sellers = this.analytics?.totalSellers || 0;
+    const orders = this.analytics?.totalOrders || 0;
+    return Math.max(users, sellers, orders, 50); // Increased minimum scale
+  }
+
+  getMaxRevenueValue(): number {
+    const revenue = this.analytics?.totalRevenue || 0;
+    return Math.max(revenue, 50); // Increased minimum scale for revenue
+  }
+
+  getUserBarHeight(): number {
+    const users = this.analytics?.totalUsers || 0;
+    const maxValue = this.getMaxCountValue();
+    return maxValue > 0 ? Math.min((users / maxValue) * 100, 100) : 0;
+  }
+
+  getSellerBarHeight(): number {
+    const sellers = this.analytics?.totalSellers || 0;
+    const maxValue = this.getMaxCountValue();
+    return maxValue > 0 ? Math.min((sellers / maxValue) * 100, 100) : 0;
+  }
+
+  getRevenueBarHeight(): number {
+    const revenue = this.analytics?.totalRevenue || 0;
+    const maxValue = this.getMaxRevenueValue();
+    return maxValue > 0 ? Math.min((revenue / maxValue) * 100, 100) : 0;
+  }
+
+  getOrdersBarHeight(): number {
+    const orders = this.analytics?.totalOrders || 0;
+    const maxValue = this.getMaxCountValue();
+    return maxValue > 0 ? Math.min((orders / maxValue) * 100, 100) : 0;
+  }
+
+  // Pixel-based bar height methods
+  getUserBarHeightPx(): number {
+    const users = this.analytics?.totalUsers || 0;
+    const maxValue = this.getMaxCountValue();
+    const maxHeight = 250; // Maximum height in pixels
+    return maxValue > 0 ? Math.max((users / maxValue) * maxHeight, 4) : 4;
+  }
+
+  getSellerBarHeightPx(): number {
+    const sellers = this.analytics?.totalSellers || 0;
+    const maxValue = this.getMaxCountValue();
+    const maxHeight = 250; // Maximum height in pixels
+    return maxValue > 0 ? Math.max((sellers / maxValue) * maxHeight, 4) : 4;
+  }
+
+  getRevenueBarHeightPx(): number {
+    const revenue = this.analytics?.totalRevenue || 0;
+    const maxValue = this.getMaxRevenueValue();
+    const maxHeight = 250; // Maximum height in pixels
+    return maxValue > 0 ? Math.max((revenue / maxValue) * maxHeight, 4) : 4;
+  }
+
+  getOrdersBarHeightPx(): number {
+    const orders = this.analytics?.totalOrders || 0;
+    const maxValue = this.getMaxCountValue();
+    const maxHeight = 250; // Maximum height in pixels
+    return maxValue > 0 ? Math.max((orders / maxValue) * maxHeight, 4) : 4;
+  }
+
+  // Pie Chart Methods
+  getTotalPieValue(): number {
+    const users = this.analytics?.totalUsers || 0;
+    const sellers = this.analytics?.totalSellers || 0;
+    const revenue = this.analytics?.totalRevenue || 0;
+    return users + sellers + revenue;
+  }
+
+  getUserPercentage(): number {
+    const total = this.getTotalPieValue();
+    const users = this.analytics?.totalUsers || 0;
+    return total > 0 ? Math.round((users / total) * 100) : 0;
+  }
+
+  getSellerPercentage(): number {
+    const total = this.getTotalPieValue();
+    const sellers = this.analytics?.totalSellers || 0;
+    return total > 0 ? Math.round((sellers / total) * 100) : 0;
+  }
+
+  getRevenuePercentage(): number {
+    const total = this.getTotalPieValue();
+    const revenue = this.analytics?.totalRevenue || 0;
+    return total > 0 ? Math.round((revenue / total) * 100) : 0;
+  }
+
+  getPieSegmentTransform(startAngle: number, percentage: number): string {
+    const angle = (percentage / 100) * 360;
+    const startRad = (startAngle * Math.PI) / 180;
+    const endRad = ((startAngle + angle) * Math.PI) / 180;
+
+    const x1 = Math.cos(startRad);
+    const y1 = Math.sin(startRad);
+    const x2 = Math.cos(endRad);
+    const y2 = Math.sin(endRad);
+
+    const largeArcFlag = angle > 180 ? 1 : 0;
+
+    return `rotate(${startAngle}deg)`;
   }
 }

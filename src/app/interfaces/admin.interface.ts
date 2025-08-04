@@ -49,3 +49,33 @@ export interface AdminProductTemplateUpdate {
   imageUrl: string;
   elements: string;
 }
+
+// Analytics interfaces
+export interface AdminAnalytics {
+  totalUsers: number;
+  totalSellers: number;
+  totalRevenue: number;
+  totalOrders: number;
+  monthlyStats: MonthlyStats[];
+  recentActivity: RecentActivity[];
+}
+
+export interface MonthlyStats {
+  month: string;
+  revenue: number;
+  orders: number;
+  newUsers: number;
+  newSellers: number;
+}
+
+export interface RecentActivity {
+  id: string;
+  type:
+    | 'user_registration'
+    | 'seller_registration'
+    | 'order_placed'
+    | 'payment_received';
+  description: string;
+  timestamp: string;
+  amount?: number;
+}

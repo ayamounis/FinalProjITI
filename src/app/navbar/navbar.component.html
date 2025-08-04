@@ -19,59 +19,77 @@
 
       <div class="collapse navbar-collapse" id="navbarContent">
         @if (isLoggedIn) {
-        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" routerLink="home">
-              <i class="fas fa-home"></i>
-              <span>Home</span>
-            </a>
-          </li>
-          @if (isSeller) {
-          <li class="nav-item">
-            <a class="nav-link" routerLink="profile">
-              <i class="fas fa-user-circle"></i>
-              <span>Profile</span>
-            </a>
-          </li>
-          } @if (isAdmin) {
-          <li class="nav-item">
-            <a class="nav-link" routerLink="admin">
-              <i class="fas fa-cog"></i>
-              <span>Admin Dashboard</span>
-            </a>
-          </li>
+          @if (isAdmin) {
+          <!-- Admin-only navbar -->
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="admin">
+                <i class="fas fa-cog"></i>
+                <span>Admin Dashboard</span>
+              </a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a
+                class="nav-link logout-btn"
+                (click)="logout()"
+                style="cursor: pointer"
+              >
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </a>
+            </li>
+          </ul>
+          } @else {
+          <!-- Regular user navbar -->
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+              </a>
+            </li>
+            @if (isSeller) {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="profile">
+                <i class="fas fa-user-circle"></i>
+                <span>Profile</span>
+              </a>
+            </li>
+            }
+            <li class="nav-item">
+              <a class="nav-link" routerLink="products">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Products</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="design">
+                <i class="fas fa-palette"></i>
+                <span>Design Now</span>
+              </a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a
+                class="nav-link logout-btn"
+                (click)="logout()"
+                style="cursor: pointer"
+              >
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </a>
+            </li>
+          </ul>
           }
-          <li class="nav-item">
-            <a class="nav-link" routerLink="products">
-              <i class="fas fa-shopping-bag"></i>
-              <span>Products</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="cart">
-              <i class="fas fa-shopping-cart"></i>
-              <span>Cart</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="design">
-              <i class="fas fa-palette"></i>
-              <span>Design Now</span>
-            </a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a
-              class="nav-link logout-btn"
-              (click)="logout()"
-              style="cursor: pointer"
-            >
-              <i class="fas fa-sign-out-alt"></i>
-              <span>Logout</span>
-            </a>
-          </li>
-        </ul>
         } @else {
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
           <li class="nav-item">
