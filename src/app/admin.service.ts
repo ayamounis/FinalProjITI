@@ -7,6 +7,7 @@ import {
   AdminProductTemplate,
   AdminProductTemplateCreate,
   AdminProductTemplateUpdate,
+  AdminAnalytics,
 } from './interfaces/admin.interface';
 
 @Injectable({
@@ -63,5 +64,22 @@ export class AdminService {
 
   deleteTemplate(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/Templates/${id}`);
+  }
+
+  // Analytics Methods
+  getAnalytics(): Observable<AdminAnalytics> {
+    return this.http.get<AdminAnalytics>(`${this.baseUrl}/Analytics`);
+  }
+
+  getTotalUsers(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/Analytics/TotalUsers`);
+  }
+
+  getTotalSellers(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/Analytics/TotalSellers`);
+  }
+
+  getTotalRevenue(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/Analytics/TotalRevenue`);
   }
 }
