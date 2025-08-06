@@ -14,6 +14,9 @@ interface DecodedToken {
   providedIn: 'root',
 })
 export class AuthService {
+  handleExternalAuth(token: string) {
+    throw new Error('Method not implemented.');
+  }
   userData: BehaviorSubject<string> = new BehaviorSubject('');
   userRole: BehaviorSubject<string> = new BehaviorSubject('');
   _httpClient = inject(HttpClient);

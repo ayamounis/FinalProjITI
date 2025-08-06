@@ -1,0 +1,43 @@
+<div class="cancel-container">
+  <div class="cancel-content">
+    <div class="error-section">
+      <div class="error-animation">
+        <div class="error-icon">
+          <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+      </div>
+
+      <div class="error-header">
+        <h1>❌ Payment Failed</h1>
+        <p class="error-message">Your payment was not completed. Please try again or contact support if the problem persists.</p>
+      </div>
+
+      <div class="error-details">
+        <div class="detail-card">
+          <h3>What happened?</h3>
+          <ul>
+            <li>Payment was cancelled or failed</li>
+            <li>Your order has not been processed</li>
+            <li>No charges were made to your account</li>
+            <li>Your cart items are still available</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" (click)="goToCart()">
+          <span>🛒</span>
+          Back to Cart
+        </button>
+        <button class="btn btn-secondary" (click)="continueShopping()">
+          <span>🛍️</span>
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+  </div>
+</div> 
