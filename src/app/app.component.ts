@@ -6,10 +6,11 @@ import { RegisterComponent } from "./register/register.component";
 import { DesignToolComponent } from "./design-tool/components/design-tool.component";
 import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { FooterComponent } from './footer/footer.component';
+import { NotificationComponent } from './notification/notification.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, ChatWindowComponent, DesignToolComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, ChatWindowComponent, DesignToolComponent, FooterComponent, NotificationComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

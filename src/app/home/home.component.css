@@ -21,6 +21,8 @@
   box-sizing: border-box;
 }
 
+
+
 body {
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
@@ -683,6 +685,8 @@ body {
     padding: 14px 30px;
     font-size: 1rem;
   }
+
+
 }
 
 @media (max-width: 480px) {

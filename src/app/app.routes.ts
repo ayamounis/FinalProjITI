@@ -14,6 +14,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Login Page' },
   { path: 'register', component: RegisterComponent, title: 'Register Page' },
   { path: 'home', component: HomeComponent, title: 'Home Page' },
+  { path: 'auth/callback', loadComponent: () => import('./auth-callback/auth-callback.component').then(m => m.AuthCallbackComponent) },
 
   // Lazy loaded routes
   {
@@ -41,11 +42,19 @@ export const routes: Routes = [
       import('./checkout/checkout.component').then((m) => m.CheckoutComponent),
   },
   {
-    path: 'paymentsuccess',
+    path: 'payment-success',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./payment-success/payment-success.component').then(
         (m) => m.PaymentSuccessComponent
+      ),
+  },
+  {
+    path: 'payment-cancel',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./payment-cancel/payment-cancel.component').then(
+        (m) => m.PaymentCancelComponent
       ),
   },
   {

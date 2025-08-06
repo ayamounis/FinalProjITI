@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Authentication Callback</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        h2 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #6b7280;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h2>Processing authentication...</h2>
+        <p>Please wait while we complete your sign-in.</p>
+    </div>
+
+    <script>
+        // Function to extract token from URL
+        function getTokenFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('token');
+        }
+
+        // Function to redirect to our Angular app
+        function redirectToApp(token) {
+            const appUrl = 'http://localhost:4200/auth-callback?token=' + encodeURIComponent(token);
+            window.location.href = appUrl;
+        }
+
+        // Main execution
+        function handleCallback() {
+            console.log('Google callback page loaded');
+            console.log('Current URL:', window.location.href);
+            
+            const token = getTokenFromUrl();
+            console.log('Extracted token:', token ? 'Found' : 'Not found');
+            
+            if (token) {
+                console.log('Redirecting to Angular app with token...');
+                redirectToApp(token);
+            } else {
+                console.error('No token found in URL');
+                // Redirect back to login with error
+                window.location.href = 'http://localhost:4200/login?error=No%20authentication%20token%20found';
+            }
+        }
+
+        // Execute when page loads
+        handleCallback();
+    </script>
+</body>
+</html> 
