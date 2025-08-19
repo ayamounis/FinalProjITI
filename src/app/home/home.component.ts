@@ -6,6 +6,7 @@ import { CategoryService } from '../category.service';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-home',
@@ -24,10 +25,21 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    // التحقق من حالة المستخدم
+    this.checkUserStatus();
     this.categories = this.categoryService.getCategories();
+  }
+
+  private checkUserStatus() {
+    // إذا كان المستخدم admin، وجهه للداش بورد
+    if (this.authService.isLoggedIn() && this.authService.isAdmin()) {
+      this.router.navigate(['/admin']);
+      return;
+    }
   }
 }

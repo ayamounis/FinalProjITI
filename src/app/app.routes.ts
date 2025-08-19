@@ -5,15 +5,16 @@ import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { authGuard } from './auth.guard';
 import { adminGuard } from './admin.guard';
+import { adminRedirectGuard } from './admin-redirect.guard';
 import { LoginRegisterComponent } from './login-register/login-register.component';
 import { SellerProfileComponent } from './seller-profile/seller-profile.component';
 import { DesignToolComponent } from './design-tool/components/design-tool.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, title: 'Login Page' },
   { path: 'register', component: RegisterComponent, title: 'Register Page' },
-  { path: 'home', component: HomeComponent, title: 'Home Page' },
+  { path: 'home', component: HomeComponent, title: 'Home Page', canActivate: [adminRedirectGuard] },
   { path: 'auth/callback', loadComponent: () => import('./auth-callback/auth-callback.component').then(m => m.AuthCallbackComponent) },
 
   // Lazy loaded routes

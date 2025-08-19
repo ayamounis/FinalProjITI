@@ -1039,21 +1039,20 @@
   text-align: center;
 }
 
-/* Bar colors: exact requested palette */
 .users-bar {
-  background: linear-gradient(to top, #d1311b, #d1311b);
+  background: #d1311b;
 }
 
 .sellers-bar {
-  background: linear-gradient(to top, #66ccff, #66ccff);
+  background: #66ccff;
 }
 
 .revenue-bar {
-  background: linear-gradient(to top, #9bd88f, #9bd88f);
+  background: #8cd96b;
 }
 
 .orders-bar {
-  background: linear-gradient(to top, #ffbe40, #ffbe40);
+  background: #f4b13b;
 }
 
 .chart-axis {
@@ -1096,8 +1095,8 @@
     #d1311b calc(0deg + (var(--users-percent, 0) * 3.6deg)),
     #66ccff calc(0deg + (var(--users-percent, 0) * 3.6deg)),
     #66ccff calc((var(--users-percent, 0) + var(--sellers-percent, 0)) * 3.6deg),
-    #9bd88f calc((var(--users-percent, 0) + var(--sellers-percent, 0)) * 3.6deg),
-    #9bd88f 360deg
+    #8cd96b calc((var(--users-percent, 0) + var(--sellers-percent, 0)) * 3.6deg),
+    #8cd96b 360deg
   );
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
@@ -1110,10 +1109,17 @@
   clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
 }
 
-/* Pie chart colors aligned with requested palette */
-.users-segment { background: #d1311b; }
-.sellers-segment { background: #66ccff; }
-.revenue-segment { background: #9bd88f; }
+.users-segment {
+  background: #d1311b;
+}
+
+.sellers-segment {
+  background: #66ccff;
+}
+
+.revenue-segment {
+  background: #8cd96b;
+}
 
 .segment-label {
   position: absolute;
@@ -1173,10 +1179,17 @@
   border-radius: 3px;
 }
 
-/* Legend colors */
-.users-color { background: #d1311b; }
-.sellers-color { background: #66ccff; }
-.revenue-color { background: #9bd88f; }
+.users-color {
+  background: #d1311b;
+}
+
+.sellers-color {
+  background: #66ccff;
+}
+
+.revenue-color {
+  background: #8cd96b;
+}
 
 /* Responsive Design for Charts */
 @media (max-width: 992px) {
